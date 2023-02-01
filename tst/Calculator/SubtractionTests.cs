@@ -5,7 +5,7 @@ namespace RamanM.Properti.Calculator.Tests;
 public class SubtractionTests
 {
     [Fact]
-    public void ToResult_Example_ReturnsTheSum()
+    public void ToResult_Example_ReturnsTheDifference()
     {
         // Arrange
         var sut = new Subtraction(5.5, 1.3);
