@@ -13,12 +13,9 @@ public class Constant : IOperation
     {
         this.value = value;
         Parent = null;
-        Operand = null;
     }
 
     public IOperation Parent { get; set; }
-
-    public IOperation Operand { get; }
 
     public string Print()
     {
