@@ -4,12 +4,12 @@ namespace RamanM.Properti.Calculator.Implementations;
 
 public class Constant : IOperation
 {
-    private readonly double value;
+    private readonly object value;
 
     private Constant()
     { }
 
-    public Constant(double value)
+    public Constant(object value)
     {
         this.value = value;
         Parent = null;
@@ -29,6 +29,6 @@ public class Constant : IOperation
 
     public double ToResult()
     {
-        return value;
+        return Convert.ToDouble(value);
     }
 }
