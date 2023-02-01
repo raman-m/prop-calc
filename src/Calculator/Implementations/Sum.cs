@@ -60,8 +60,9 @@ public class Sum : IBinaryOperation
         var left = Left.Print();
         var right = Right.Print();
         double val = value.HasValue ? value.Value : ToResult();
+        var result = Parent == null ? $" = {val}" : string.Empty;
 
-        return $"({left} + {right}) = {val}";
+        return $"({left} + {right}){result}";
     }
 
     public string PrintSentence()

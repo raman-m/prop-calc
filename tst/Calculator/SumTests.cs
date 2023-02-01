@@ -19,12 +19,28 @@ public class SumTests
     }
 
     [Fact]
-    public void Print_Example_PrintsWell()
+    public void Print_NoParent_PrintsFinalEquality()
     {
         // Arrange
         double left = 5.2D, right = 1.5D, sum = 6.7D;
         var sut = new Sum(left, right);
         string expected = $"({left} + {right}) = {sum}";
+
+        // Act
+        var actual = sut.Print();
+
+        // Assert
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void Print_WithParent_PrintsWithoutResult()
+    {
+        // Arrange
+        double left = 5.2D, right = 1.5D;
+        var sut = new Sum(left, right);
+        sut.Parent = new Constant(0);
+        string expected = $"({left} + {right})";
 
         // Act
         var actual = sut.Print();
