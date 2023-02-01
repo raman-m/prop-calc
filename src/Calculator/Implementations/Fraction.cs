@@ -67,9 +67,11 @@ public class Fraction : IBinaryOperation
         var left = Left.PrintSentence();
         var right = Right.PrintSentence();
         double val = value.HasValue ? value.Value : ToResult();
-        var result = Parent == null ? $" is {val}" : string.Empty;
 
-        return $"{nameof(Fraction).ToLower()} of {left} by {right}{result}";
+        if (Parent == null)
+            return $"{nameof(Fraction).ToLower()} of {left} and {right} is {val}";
+
+        return $"{left}/{right}";
     }
 
     public double ToResult()

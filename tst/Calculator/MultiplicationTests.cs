@@ -55,7 +55,7 @@ public class MultiplicationTests
         // Arrange
         double left = 5.0D, right = 1.1D, product = 5.5D;
         var sut = new Multiplication(left, right);
-        string expected = $"{nameof(Multiplication).ToLower()} of {left} by {right} is {product}";
+        string expected = $"{nameof(Multiplication).ToLower()} of {left} and {right} is {product}";
 
         // Act
         var actual = sut.PrintSentence();
@@ -71,7 +71,7 @@ public class MultiplicationTests
         double left = 5.0D, right = 1.1D;
         var sut = new Multiplication(left, right);
         sut.Parent = new Constant(0);
-        string expected = $"{nameof(Multiplication).ToLower()} of {left} by {right}";
+        string expected = $"{nameof(Multiplication).ToLower()} of {left} and {right}";
 
         // Act
         var actual = sut.PrintSentence();
