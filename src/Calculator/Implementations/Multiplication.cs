@@ -69,7 +69,7 @@ public class Multiplication : IBinaryOperation
         double val = value.HasValue ? value.Value : ToResult();
         var result = Parent == null ? $" is {val}" : string.Empty;
 
-        return $"{nameof(Multiplication).ToLower()} of {left} and {right}{result}";
+        return $"{nameof(Multiplication).ToLower()} of {left} by {right}{result}";
     }
 
     public double ToResult()

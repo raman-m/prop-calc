@@ -69,7 +69,7 @@ public class Division : IBinaryOperation
         double val = value.HasValue ? value.Value : ToResult();
         var result = Parent == null ? $" is {val}" : string.Empty;
 
-        return $"{nameof(Division).ToLower()} of {left} and {right}{result}";
+        return $"{nameof(Division).ToLower()} of {left} by {right}{result}";
     }
 
     public double ToResult()

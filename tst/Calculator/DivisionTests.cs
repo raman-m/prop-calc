@@ -17,6 +17,7 @@ public class DivisionTests
         // Assert
         Assert.Equal(expected, actual);
     }
+
     [Fact]
     public void Print_NoParent_PrintsFinalEquality()
     {
@@ -54,7 +55,7 @@ public class DivisionTests
         // Arrange
         double left = 30D, right = 5D, quotient = 6D;
         var sut = new Division(left, right);
-        string expected = $"{nameof(Division).ToLower()} of {left} and {right} is {quotient}";
+        string expected = $"{nameof(Division).ToLower()} of {left} by {right} is {quotient}";
 
         // Act
         var actual = sut.PrintSentence();
@@ -70,7 +71,7 @@ public class DivisionTests
         double left = 30D, right = 5D;
         var sut = new Division(left, right);
         sut.Parent = new Constant(0);
-        string expected = $"{nameof(Division).ToLower()} of {left} and {right}";
+        string expected = $"{nameof(Division).ToLower()} of {left} by {right}";
 
         // Act
         var actual = sut.PrintSentence();
