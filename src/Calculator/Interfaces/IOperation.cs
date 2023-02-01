@@ -1,15 +1,9 @@
 ﻿namespace RamanM.Properti.Calculator.Interfaces;
 
 /// <summary>
-/// Unary operation with one operand.
+/// Defines binary or unary operation with a parent.
 /// </summary>
-/// <remarks>
-/// The value of an operation is caclulative.
-/// </remarks>
 public interface IOperation : IResultant, IPrintable
 {
-    IOperation Parent { get; }
-    IOperation Operand { get; }
-
-    double? Value { get; }
+    IOperation Parent { get; set; }
 }

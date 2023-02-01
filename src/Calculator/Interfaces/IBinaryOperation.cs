@@ -1,7 +1,7 @@
 ﻿namespace RamanM.Properti.Calculator.Interfaces;
 
 /// <summary>
-/// Binary operation with two operands.
+/// Defines binary operation with two operands.
 /// </summary>
 public interface IBinaryOperation : IOperation, IResultant, IPrintable
 {
