@@ -2,69 +2,29 @@
 
 namespace RamanM.Properti.Calculator.Implementations;
 
-public class Faculty : IUnaryOperation
+public class Faculty : UnaryOperation<long>, IResultant<double>, IResultant<int>
 {
-    private long? value;
-
     private Faculty()
-    {
-        value = null;
-        Operand = null;
-        Parent = null;
-    }
+        : base() { }
 
-    public Faculty(int operand)
-        : this()
-    {
-        Operand = new Constant(operand);
-        Operand.Parent = this;
-    }
+    public Faculty(long operand)
+        : base(operand) { }
 
     public Faculty(IOperation operation)
-        : this()
-    {
-        Operand = operation;
-        Operand.Parent = this;
-    }
+        : base(operation) { }
 
-    public IOperation Operand { get; private set; }
+    public Faculty(IOperation<long> operation)
+        : base(operation) { }
 
-    public IOperation Parent { get; set; }
+    protected override char Operator => '!';
 
-    public string Print()
-    {
-        var operand = Operand.Print();
-        double val = value.HasValue ? value.Value : ToResult();
-        var result = Parent == null ? $" = {val}" : string.Empty;
+    public override long Apply(long operand)
+        => (operand <= 1) ? 1
+            : Apply(operand - 1) * operand;
 
-        return $"({operand}!){result}";
-    }
+    double IResultant<double>.ToResult()
+        => (double)ToResult();
 
-    public string PrintSentence()
-    {
-        var operand = Operand.PrintSentence();
-        double val = value.HasValue ? value.Value : ToResult();
-        var result = Parent == null ? $" is {val}" : string.Empty;
-
-        return $"{nameof(Faculty).ToLower()} of {operand}{result}";
-    }
-
-    public double ToResult()
-    {
-        if (!value.HasValue)
-        {
-            int opr = (int)Operand.ToResult();
-            value = Apply(opr);
-        }
-
-        return (double)value;
-    }
-
-    public static long Apply(int operand)
-    {
-        if (operand <= 1)
-            return 1; // neutral element
-
-        return Apply(operand - 1) * operand;
-    }
+    int IResultant<int>.ToResult()
+        => unchecked((int)ToResult());
 }

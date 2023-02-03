@@ -2,91 +2,40 @@
 
 namespace RamanM.Properti.Calculator.Implementations;
 
-public class Fraction : IBinaryOperation
+public class Fraction : BinaryOperation<double, int>, IResultant<int>, IResultant<long>
 {
-    private double? value;
-
     private Fraction()
-    {
-        value = null;
-        Left = null;
-        Right = null;
-        Parent = null;
-    }
+        : base() { }
 
     public Fraction(int left, int right)
-        : this()
-    {
-        Left = new Constant(left);
-        Right = new Constant(right);
-        Left.Parent = Right.Parent = this;
-    }
+        : base(left, right) { }
 
-    public Fraction(IOperation left, int right)
-        : this()
-    {
-        Left = left;
-        Right = new Constant(right);
-        Left.Parent = Right.Parent = this;
-    }
+    public Fraction(IOperation<int> left, int right)
+        : base(left, right) { }
 
-    public Fraction(int left, IOperation right)
-        : this()
-    {
-        Left = new Constant(left);
-        Right = right;
-        Left.Parent = Right.Parent = this;
-    }
+    public Fraction(int left, IOperation<int> right)
+        : base(left, right) { }
 
     public Fraction(IOperation left, IOperation right)
-        : this()
-    {
-        Left = left;
-        Right = right;
-        left.Parent = right.Parent = this;
-    }
+        : base(left, right) { }
 
-    public IOperation Left { get; private set; }
+    public Fraction(IOperation<int> left, IOperation<int> right)
+        : base(left, right) { }
 
-    public IOperation Right { get; private set; }
+    protected override char Operator => '/';
 
-    public IOperation Parent { get; set; }
+    public override double Apply(int left, int right)
+        => (double)left / right;
 
-    public string Print()
-    {
-        var left = Left.Print();
-        var right = Right.Print();
-        double val = value.HasValue ? value.Value : ToResult();
-        var result = Parent == null ? $" = {val}" : string.Empty;
+    protected override string PrintFormat()
+        => base.PrintFormat().Replace(" ", string.Empty);
 
-        return $"({left}/{right}){result}";
-    }
+    protected override string SentenceFormat()
+        => "{0}" + Operator + "{1}";
 
-    public string PrintSentence()
-    {
-        var left = Left.PrintSentence();
-        var right = Right.PrintSentence();
-        double val = value.HasValue ? value.Value : ToResult();
+    int IResultant<int>.ToResult()
+        => Convert.ToInt32(ToResult());
 
-        if (Parent == null)
-            return $"{nameof(Fraction).ToLower()} of {left} and {right} is {val}";
-
-        return $"{left}/{right}";
-    }
-
-    public double ToResult()
-    {
-        if (!value.HasValue)
-        {
-            var l = Left.ToResult();
-            var r = Right.ToResult();
-            value = Apply(l, r);
-        }
-
-        return (double)value;
-    }
-    public static double Apply(double left, double right)
-    {
-        return left / right;
-    }
+    long IResultant<long>.ToResult()
+        => Convert.ToInt64(ToResult());
 }

@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace RamanM.Properti.Calculator.Interfaces;
+﻿namespace RamanM.Properti.Calculator.Interfaces;
 
 /// <summary>
 /// Defines unary operation with one operand.
 /// </summary>
-public interface IUnaryOperation : IOperation, IResultant, IPrintable
+public interface IUnaryOperation<T> : IOperation<T>, IResultant<T>, IOperation, IResultant, IPrintable
+    where T : struct
 {
     IOperation Operand { get; }
+
+    T Apply(T operand);
 }

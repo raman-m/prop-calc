@@ -57,7 +57,7 @@ public class FractionTests
         int left = 2, right = 3;
         double fraction = 2D / 3D;
         var sut = new Fraction(left, right);
-        string expected = $"{nameof(Fraction).ToLower()} of {left} and {right} is {fraction}";
+        string expected = $"{left}/{right} is {fraction}";
 
         // Act
         var actual = sut.PrintSentence();
