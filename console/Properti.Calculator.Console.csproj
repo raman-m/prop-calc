@@ -10,7 +10,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="RoslynTest.csharp" />
+    <Content Include="RoslynTest.csharp" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis" Version="4.4.0" />
+    <PackageReference Include="System.CodeDom" Version="7.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\src\Calculator\Properti.Calculator.csproj" />
+    <ProjectReference Include="..\src\Roslyn.CodeDom\Roslyn.CodeDom.csproj" />
   </ItemGroup>
 
 </Project>
