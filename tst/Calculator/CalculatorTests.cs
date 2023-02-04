@@ -1,12 +1,16 @@
+using RamanM.Properti.Calculator.Interfaces;
+
 namespace RamanM.Properti.Calculator.Tests;
 
 public class CalculatorTests
 {
     private readonly Calculator sut; // System Under Test
+    private readonly Mock<IConsoleWriting> console;
 
     public CalculatorTests()
     {
-        sut = new Calculator();
+        console = new Mock<IConsoleWriting>();
+        sut = new Calculator(console.Object);
     }
 
     [Fact]
