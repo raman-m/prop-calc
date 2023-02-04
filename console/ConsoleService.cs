@@ -5,17 +5,25 @@ namespace RamanM.Properti.Calculator.Console;
 
 public class ConsoleService : IConsoleService
 {
-    public ConsoleColor Color
-    {
-        get => Cns.ForegroundColor;
-        set => Cns.ForegroundColor = value;
-    }
+    public ConsoleColor Color { get => Cns.ForegroundColor; set => Cns.ForegroundColor = value; }
+
+    public int BufferWidth { get => Cns.BufferWidth; set => Cns.BufferWidth = value; }
+    public int BufferHeight { get => Cns.BufferHeight; set => Cns.BufferHeight = value; }
+
+    public int CursorLeft { get => Cns.CursorLeft; set => Cns.CursorLeft = value; }
+    public int CursorTop { get => Cns.CursorTop; set => Cns.CursorTop = value; }
+
+    public bool CursorVisible { get => Cns.CursorVisible; set => Cns.CursorVisible = value; }
+
+    public void Beep() => Cns.Beep();
+    public void Beep(int frequency, int duration) => Cns.Beep(frequency, duration);
 
     public void Clear() => Cns.Clear();
 
     public (int Left, int Top) GetCursor() => Cns.GetCursorPosition();
 
     public ConsoleKeyInfo ReadKey() => Cns.ReadKey();
+    public ConsoleKeyInfo ReadKey(bool intercept) => Cns.ReadKey(true);
 
     public string ReadLine() => Cns.ReadLine();
 

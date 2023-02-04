@@ -61,9 +61,9 @@ internal class ConsoleCalculator : Calculator
     public bool WaitUser()
     {
         console.WriteLine();
-        console.WriteLine("Enter Ctrl+Q to Quit, Ctrl+E to Exit, Ctrl+L to Clear the window");
-        console.WriteLine("Or any key to start new expression test...");
-        ConsoleKeyInfo info = console.ReadKey();
+        console.WriteLine("Enter Ctrl+Q to Quit, Ctrl+E to Exit, Ctrl+L to Clear the log");
+        console.Write("Or press any key to restart... ");
+        ConsoleKeyInfo info = console.ReadKey(true);
         if (info.Modifiers == ConsoleModifiers.Control)
         {
             if (info.Key == ConsoleKey.Q)
@@ -79,10 +79,100 @@ internal class ConsoleCalculator : Calculator
             }
             else if (info.Key == ConsoleKey.L)
             {
+                console.WriteLine();
                 console.Clear();
             }
         }
+        console.WriteLine();
         return false;
+    }
+
+    protected void EnsureScrolling(ref int top)
+    {
+        if (console.CursorTop >= console.BufferHeight - 1)
+            top--;
+    }
+
+    protected void PrintAction(string action, ConsoleColor color, int line)
+    {
+        console.Color = color;
+        console.SetCursor(0, line);
+        console.Write(action);
+    }
+
+    protected const string Pointer = "-> ";
+
+    protected void PointToAction(string[] actions, int to, ConsoleColor color, int line)
+    {
+        var pointTo = actions[to];
+        pointTo = pointTo.Remove(0, Pointer.Length).Insert(0, Pointer);
+        PrintAction(pointTo, color, line);
+    }
+
+    public int UserAction(string[] actions, int selected)
+    {
+        console.CursorVisible = false;
+        console.WriteLine();
+        console.WriteLine("Your next action?");
+        var start = console.GetCursor();
+        foreach (var action in actions)
+        {
+            EnsureScrolling(ref start.Top); // scroll start position with window log
+            console.WriteLine(action);
+        }
+        console.Color = ConsoleColor.DarkGray;
+        console.Write("Use arrows [Up, Down] to make the choice, and press Enter... ");
+        var end = console.GetCursor();
+
+        // Print selected action
+        PointToAction(actions, selected, ConsoleColor.Yellow, start.Top + selected);
+        console.SetCursor(end.Left, end.Top);
+
+        int index = selected;
+        while (true)
+        {
+            ConsoleKeyInfo info = console.ReadKey(true);
+            console.Color = ConsoleColor.White;
+            console.SetCursor(end.Left, end.Top);
+            int old = index;
+            if (info.Key == ConsoleKey.UpArrow)
+            {
+                console.Write('A');
+                index--;
+                if (index < 0)
+                    index = 0;
+            }
+            else if (info.Key == ConsoleKey.DownArrow)
+            {
+                console.Write('V');
+                index++;
+                if (index >= actions.Length)
+                    index = actions.Length - 1;
+            }
+            else if (info.Key == ConsoleKey.Enter)
+            {
+                console.Write(index + 1);
+                break; ;
+            }
+            else
+            {
+                console.Write(' ');
+                continue;
+            }
+            PrintAction(actions[old], ConsoleColor.White, start.Top + old);
+            // Re-print new action as selected
+            PointToAction(actions, index, ConsoleColor.Yellow, start.Top + index);
+
+            console.Beep();
+            console.SetCursor(end.Left, end.Top);
+            console.Write(' ');
+            console.SetCursor(end.Left, end.Top);
+        }
+        console.SetCursor(end.Left, end.Top);
+        console.WriteLine();
+        console.Beep((index + 1) * 1000, 300); // 1 up to 4 KHz during 0.3 seconds
+        console.CursorVisible = true;
+        return index;
     }
 
     public void CompileFile(string appPath, string csharpFileName)
