@@ -49,14 +49,54 @@ namespace RamanM.Properti.Calculator.Console.Roslyn
 
         public CompilerResults CompileAssemblyFromSourceBatch(CompilerParameters options, string[] sources)
         {
-            var compilation = CSharpCompilation
-                .Create(
-                    Path.GetFileName(options.OutputAssembly),
-                    syntaxTrees: sources.Select(x => CSharpSyntaxTree.ParseText(x)))
-                .WithReferenceAssemblies(TargetFramework);
+            return CompileAssembly(options, sources);
+        }
 
+        public CompilerResults CompileAssembly(CompilerParameters options, string[] sources, string[] references = null)
+        {
+            var defaultRefs = new[] {
+                typeof(object).Assembly.Location, // System.Runtime.dll, namespace System
+                typeof(Enumerable).Assembly.Location // System.Linq.dll
+            };
+            options.ReferencedAssemblies.AddRange(references?.Length > 0 ? references : defaultRefs);
+            var metaReferences = options.ReferencedAssemblies
+                .Cast<string>()
+                .Select(asm => MetadataReference.CreateFromFile(asm))
+                .ToList();
+            var compilation = CSharpCompilation.Create(
+                Path.GetFileName(options.OutputAssembly),
+                syntaxTrees: sources.Select(x => CSharpSyntaxTree.ParseText(x)),
+                metaReferences,
+                new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+            _ = compilation.WithReferenceAssemblies(TargetFramework);
+
+            return Compile(compilation, options);
+        }
+
+        private void AppendDiagnostics(IEnumerable<Diagnostic> diagnostics, CompilerResults results)
+        {
+            foreach (var diagnostic in diagnostics)
+            {
+                var message = diagnostic.GetMessage();
+                var exists = results.Errors.Cast<CompilerError>().Any(e => e.ErrorText == message);
+                if (!exists)
+                {
+                    var error = new CompilerError(
+                        diagnostic.Location.SourceTree?.FilePath,
+                        line: diagnostic.Location.GetLineSpan().StartLinePosition.Line,
+                        column: diagnostic.Location.GetLineSpan().StartLinePosition.Character,
+                        errorNumber: diagnostic.Id,
+                        errorText: diagnostic.GetMessage());
+                    error.IsWarning = diagnostic.Severity != DiagnosticSeverity.Error;
+                    results.Errors.Add(error);
+                }
+            }
+        }
+
+        protected CompilerResults Compile(CSharpCompilation compilation, CompilerParameters options)
+        {
             var compilerResults = new CompilerResults(new TempFileCollection());
-            AppendDiagnostics(compilation.GetDiagnostics());
+            AppendDiagnostics(compilation.GetDiagnostics(), compilerResults);
 
             using var fileStream = new FileStream(options.OutputAssembly, FileMode.Create, FileAccess.ReadWrite, FileShare.None);
             var emitResult = compilation.Emit(fileStream);
@@ -64,7 +104,7 @@ namespace RamanM.Properti.Calculator.Console.Roslyn
 
             if (emitResult.Success)
             {
-                compilerResults.NativeCompilerReturnValue = 0;
+                compilerResults.NativeCompilerReturnValue = 1;
                 if (options.GenerateInMemory)
                 {
                     var bytes = File.ReadAllBytes(options.OutputAssembly);
@@ -73,25 +113,11 @@ namespace RamanM.Properti.Calculator.Console.Roslyn
             }
             else
             {
-                compilerResults.NativeCompilerReturnValue = 0;
-                AppendDiagnostics(emitResult.Diagnostics);
+                compilerResults.NativeCompilerReturnValue = -1;
+                AppendDiagnostics(emitResult.Diagnostics, compilerResults);
             }
 
             return compilerResults;
-
-            void AppendDiagnostics(IEnumerable<Diagnostic> diagnostics)
-            {
-                foreach (var diagnostic in diagnostics)
-                {
-                    var error = new CompilerError(
-                        diagnostic.Location.SourceTree?.FilePath,
-                        line: diagnostic.Location.GetLineSpan().StartLinePosition.Line,
-                        column: diagnostic.Location.GetLineSpan().StartLinePosition.Character,
-                        errorNumber: diagnostic.Id,
-                        errorText: diagnostic.GetMessage());
-                    compilerResults.Errors.Add(error);
-                }
-            }
         }
     }
 }

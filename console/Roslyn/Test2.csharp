@@ -1,24 +1,24 @@
-﻿using System;
-using RamanM.Properti.Calculator;
-
-internal static class RoslynTest
-{
-    static void Main()
-    {
-        Console.ReadLine();
-    }
-}
+﻿//using System;
 
 namespace RoslynTests
 {
     public class Test2
     {
-        public static int Run(string str)
+        public static Test2 Create()
         {
-            var instance = new Calculator(null); //Test1();
-            //instance.Sum(1, 2);
-            //return instance.Length(str);
-            return -1;
+            var me = new Test2();
+            return me;
+        }
+
+        public static Test1 CreateRefType()
+        {
+            var instance = new Test1();
+            return instance;
+        }
+
+        public int Length(string str)
+        {
+            return str.Length;
         }
     }
 }

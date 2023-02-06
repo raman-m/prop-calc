@@ -1,18 +1,10 @@
-﻿using System;
-
-internal static class RoslynTest
-{
-    static void Main()
-    {
-        Console.ReadLine();
-    }
-}
+﻿//using System;
 
 namespace RoslynTests
 {
     public class Test1
     {
-        public static Test1 Run()
+        public static Test1 Create()
         {
             var me = new Test1();
             return me;

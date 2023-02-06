@@ -195,11 +195,10 @@ namespace RamanM.Properti.Calculator.Console
             var toFile = Path.Combine(appPath, Path.GetFileNameWithoutExtension(csharpFileName) + ".dll");
             var csharp = File.ReadAllText(csFile);
 
-            Compile(csharp, toFile, refs, indent);
-            return toFile;
+            return Compile(csharp, toFile, refs, indent);
         }
 
-        public void Compile(string csharp, string toFile, string[] references = null, string indent = "")
+        public string Compile(string csharp, string toFile, string[] references = null, string indent = "")
         {
 
             string[] referenceAssemblies = references ?? Array.Empty<string>();
@@ -210,10 +209,10 @@ namespace RamanM.Properti.Calculator.Console
 
             var stopWatch = new Stopwatch();
             stopWatch.Start();
-            //var provider = new RoslynCodeDomProvider(TargetFramework.Net50);
+
             var roslyn = new RoslynService(ReferenceAssemblyKind.Net60);
             var results = roslyn.CompileAssemblyFromSource(options, csharp);
-            //var results = provider.CompileAssemblyFromFile(options, new[] { csFile });
+
             stopWatch.Stop();
             TimeSpan ts = stopWatch.Elapsed;
             string elapsedTime = string.Format("{0}.{1:000} second(s)", ts.Seconds, ts.Milliseconds);
@@ -221,25 +220,29 @@ namespace RamanM.Properti.Calculator.Console
             console.Color = ConsoleColor.Yellow;
             console.WriteLine(indent + "Compiler return value: " + results.NativeCompilerReturnValue);
             console.WriteLine(indent + "Compilation took: " + elapsedTime);
-            console.WriteLine(indent + "The C# code compiled to: " + (results.PathToAssembly ?? toFile));
 
             if (results.Errors.Count == 0)
             {
+                console.WriteLine(indent + "The C# code compiled to: " + (results.PathToAssembly ?? toFile));
                 console.Color = ConsoleColor.Green;
                 console.WriteLine(indent + "Successful");
+                console.Color = ConsoleColor.White;
+                return toFile;
             }
-            else
+
+            console.Color = ConsoleColor.Red;
+            console.WriteLine(indent + "Compilation errors:");
+            var errors = results.Errors.Cast<CompilerError>()
+                .OrderBy(e => e.Line).ThenBy(e => e.Column).ToArray();
+            for (int i = 0; i < errors.Length; i++)
             {
-                console.Color = ConsoleColor.Red;
-                console.WriteLine(indent + "Compilation errors:");
-                var errors = results.Errors.Cast<CompilerError>().ToArray();
-                for (int i = 0; i < errors.Length; i++)
-                {
-                    var e = errors[i];
-                    console.WriteLine($"{indent}#{i} (line {e.Line}, column {e.Column}) : {e.ErrorText}");
-                }
+                var e = errors[i];
+                var type = e.IsWarning ? "warning" : "error";
+                console.Color = e.IsWarning ? ConsoleColor.Yellow : ConsoleColor.Red;
+                console.WriteLine($"{indent}#{i} (line {e.Line}, column {e.Column}) {type}: {e.ErrorText}");
             }
             console.Color = ConsoleColor.White;
+            return string.Empty;
         }
     }
 }

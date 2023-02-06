@@ -50,36 +50,61 @@ internal class Program
     {
         string baseDir = Path.Combine(currentDir, "Roslyn");
         console.WriteLine("Going to run basic compilation tests...");
+        string indent = "  ";
 
         var typeName = "Test1";
-        var testName = typeName.Insert(typeName.IndexOf(typeName.First(char.IsDigit)), " ");
-        console.WriteLine();
-        console.WriteLine($"[{testName}]: No references");
-        string indent = "  ";
+        var testName = StartTest(console, typeName, "[{0}]: No references");
         string[] references = Array.Empty<string>();
         var path = calculator.CompileFile(baseDir, typeName + ".csharp", references, indent);
-        console.Write($"{indent}Reflecting of the {typeName} type... ");
-        var dll = Assembly.LoadFrom(path);
-        var types = dll.GetTypes();
-        console.WriteLine("Defined types: " + string.Join(", ", types.Select(t => t.Name).Where(s => !s.Contains("Attribute"))));
-        var status = string.Empty;
-        bool success = false;
-        var @namespace = "RoslynTests";
-        try
-        {
-            var fullName = $"{@namespace}.{typeName}";
-            var instance = dll.CreateInstance(fullName);
-            if (instance == null)
-                throw new Exception("No instance");
+        PrintTest(console, typeName, testName, path, indent);
 
-            Type t = dll.GetType(fullName, true);
-            var len = t.GetMethod("Length").Invoke(instance, new object[] { "123" });
-            status = $"Type '{typeName}' loaded successfully.";
-            success = true;
-        }
-        catch (Exception e)
+        typeName = "Test2";
+        testName = StartTest(console, typeName, "[{0}]: With references");
+        references = new string[] { Path.Combine(baseDir, "Test1.dll") };
+        path = calculator.CompileFile(baseDir, typeName + ".csharp", references, indent);
+        PrintTest(console, typeName, testName, path, indent);
+    }
+
+    private static string StartTest(IConsoleService console, string typeName, string format)
+    {
+        var testName = typeName.Insert(typeName.IndexOf(typeName.First(char.IsDigit)), " ");
+        console.WriteLine();
+        console.WriteLine(string.Format(format, testName));
+        return testName;
+    }
+
+    private static void PrintTest(IConsoleService console, string typeName, string testName, string path, string indent)
+    {
+        bool success = false;
+        string status = string.Empty;
+        if (!string.IsNullOrEmpty(path))
         {
-            status = e.Message;
+            console.Write($"{indent}Reflecting of the {typeName} type... ");
+            var dll = Assembly.LoadFrom(path);
+            var types = dll.GetTypes();
+            console.WriteLine("Defined types: " + string.Join(", ", types.Select(t => t.Name).Where(s => !s.Contains("Attribute"))));
+            var @namespace = "RoslynTests";
+            try
+            {
+                var fullName = $"{@namespace}.{typeName}";
+                var instance = dll.CreateInstance(fullName);
+                if (instance == null)
+                    throw new Exception("No instance");
+
+                Type t = dll.GetType(fullName, true);
+                var len = t.GetMethod("Length").Invoke(instance, new object[] { "123" });
+                status = $"Type '{typeName}' loaded successfully.";
+                success = true;
+            }
+            catch (Exception e)
+            {
+                status = e.Message;
+                success = false;
+            }
+        }
+        else
+        {
+            status = "Compilation failed!";
             success = false;
         }
         console.Color = success ? ConsoleColor.Green : ConsoleColor.Red;
@@ -90,14 +115,5 @@ internal class Program
         console.Color = success ? ConsoleColor.Green : ConsoleColor.Red;
         console.WriteLine(result);
         console.Color = ConsoleColor.White;
-
-        typeName = "Test2";
-        testName = typeName.Insert(typeName.IndexOf(typeName.First(char.IsDigit)), " ");
-        console.WriteLine();
-        console.WriteLine($"[{testName}]: With references");
-        indent = "  ";
-        references = new string[] { "d:\\github\\prop-calc\\console\\bin\\Debug\\net5.0\\RamanM.Properti.Calculator.dll" }; //{ Path.Combine(baseDir, "Test1.dll") };
-        path = calculator.CompileFile(baseDir, typeName + ".csharp", references, indent);
-
     }
 }
