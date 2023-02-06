@@ -1,18 +1,20 @@
 ﻿using RamanM.Properti.Calculator.Interfaces;
 
-namespace RamanM.Properti.Calculator;
-
-public class Calculator
+namespace RamanM.Properti.Calculator
 {
-    protected readonly IConsoleWriting @out;
 
-    public Calculator(IConsoleWriting output)
+    public class Calculator
     {
-        @out = output;
-    }
+        protected readonly IConsoleWriting @out;
 
-    public double Sum(double left, double right)
-    {
-        return left + right;
+        public Calculator(IConsoleWriting output)
+        {
+            @out = output;
+        }
+
+        public double Sum(double left, double right)
+        {
+            return left + right;
+        }
     }
 }

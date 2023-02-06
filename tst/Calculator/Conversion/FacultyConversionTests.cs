@@ -1,109 +1,111 @@
 ﻿using RamanM.Properti.Calculator.Implementations;
 using RamanM.Properti.Calculator.Interfaces;
+using Xunit;
 
-namespace RamanM.Properti.Calculator.Tests.Conversion;
-
-public class FacultyConversionTests
+namespace RamanM.Properti.Calculator.Tests.Conversion
 {
-    [Fact]
-    public void Faculty_SingleParamCstr_ReturnsFacultyObject()
+    public class FacultyConversionTests
     {
-        // Arrange, Act
-        var sut = new Faculty(4);
+        [Fact]
+        public void Faculty_SingleParamCstr_ReturnsFacultyObject()
+        {
+            // Arrange, Act
+            var sut = new Faculty(4);
 
-        // Assert
-        Assert.NotNull(sut);
-        Assert.Equal(24, sut.ToResult());
-    }
+            // Assert
+            Assert.NotNull(sut);
+            Assert.Equal(24, sut.ToResult());
+        }
 
-    [Fact]
-    public void Faculty_ConstantParamCstr_ReturnsFacultyObject()
-    {
-        // Arrange, Act
-        var sut = new Faculty(new Constant<long>(3));
+        [Fact]
+        public void Faculty_ConstantParamCstr_ReturnsFacultyObject()
+        {
+            // Arrange, Act
+            var sut = new Faculty(new Constant<long>(3));
 
-        // Assert
-        Assert.NotNull(sut);
-        Assert.Equal(6, sut.ToResult());
-    }
+            // Assert
+            Assert.NotNull(sut);
+            Assert.Equal(6, sut.ToResult());
+        }
 
-    [Fact]
-    public void Faculty_InterfaceParamCstr_ReturnsFacultyObject()
-    {
-        // Arrange
-        IOperation<long> param = new Constant<long>(2);
+        [Fact]
+        public void Faculty_InterfaceParamCstr_ReturnsFacultyObject()
+        {
+            // Arrange
+            IOperation<long> param = new Constant<long>(2);
 
-        // Act
-        var sut = new Faculty(param);
+            // Act
+            var sut = new Faculty(param);
 
-        // Assert
-        Assert.NotNull(sut);
-        Assert.Equal(2, sut.ToResult());
-    }
+            // Assert
+            Assert.NotNull(sut);
+            Assert.Equal(2, sut.ToResult());
+        }
 
-    [Fact]
-    public void Faculty_ImplicitConversionOfSum_ReturnsFacultyObject()
-    {
-        // Arrange, Act
-        var sut = new Faculty(new Sum(2, 3));
+        [Fact]
+        public void Faculty_ImplicitConversionOfSum_ReturnsFacultyObject()
+        {
+            // Arrange, Act
+            var sut = new Faculty(new Sum(2, 3));
 
-        // Assert
-        Assert.NotNull(sut);
-        Assert.Equal(120, sut.ToResult());
-    }
+            // Assert
+            Assert.NotNull(sut);
+            Assert.Equal(120, sut.ToResult());
+        }
 
-    [Fact]
-    public void Faculty_ImplicitConversionOfSubtraction_ReturnsFacultyObject()
-    {
-        // Arrange, Act
-        var sut = new Faculty(new Subtraction(5, 2));
+        [Fact]
+        public void Faculty_ImplicitConversionOfSubtraction_ReturnsFacultyObject()
+        {
+            // Arrange, Act
+            var sut = new Faculty(new Subtraction(5, 2));
 
-        // Assert
-        Assert.NotNull(sut);
-        Assert.Equal(6, sut.ToResult());
-    }
+            // Assert
+            Assert.NotNull(sut);
+            Assert.Equal(6, sut.ToResult());
+        }
 
-    [Fact]
-    public void Faculty_ImplicitConversionOfMultiplication_ReturnsFacultyObject()
-    {
-        // Arrange, Act
-        var sut = new Faculty(new Multiplication(2.5, 2));
+        [Fact]
+        public void Faculty_ImplicitConversionOfMultiplication_ReturnsFacultyObject()
+        {
+            // Arrange, Act
+            var sut = new Faculty(new Multiplication(2.5, 2));
 
-        // Assert
-        Assert.NotNull(sut);
-        Assert.Equal(120, sut.ToResult());
-    }
+            // Assert
+            Assert.NotNull(sut);
+            Assert.Equal(120, sut.ToResult());
+        }
 
-    [Fact]
-    public void Faculty_ImplicitConversionOfDivision_ReturnsFacultyObject()
-    {
-        // Arrange, Act
-        var sut = new Faculty(new Division(12, 2));
+        [Fact]
+        public void Faculty_ImplicitConversionOfDivision_ReturnsFacultyObject()
+        {
+            // Arrange, Act
+            var sut = new Faculty(new Division(12, 2));
 
-        // Assert
-        Assert.NotNull(sut);
-        Assert.Equal(720, sut.ToResult());
-    }
+            // Assert
+            Assert.NotNull(sut);
+            Assert.Equal(720, sut.ToResult());
+        }
 
-    [Fact]
-    public void Faculty_ImplicitConversionOfFraction_ReturnsFacultyObject()
-    {
-        // Arrange, Act
-        var sut = new Faculty(new Fraction(10, 2));
+        [Fact]
+        public void Faculty_ImplicitConversionOfFraction_ReturnsFacultyObject()
+        {
+            // Arrange, Act
+            var sut = new Faculty(new Fraction(10, 2));
 
-        // Assert
-        Assert.NotNull(sut);
-        Assert.Equal(120, sut.ToResult());
-    }
+            // Assert
+            Assert.NotNull(sut);
+            Assert.Equal(120, sut.ToResult());
+        }
 
-    [Fact]
-    public void Faculty_ImplicitConversionOfFaculty_ReturnsFacultyObject()
-    {
-        // Arrange, Act
-        var sut = new Faculty(new Faculty(3));
+        [Fact]
+        public void Faculty_ImplicitConversionOfFaculty_ReturnsFacultyObject()
+        {
+            // Arrange, Act
+            var sut = new Faculty(new Faculty(3));
 
-        // Assert
-        Assert.NotNull(sut);
-        Assert.Equal(720, sut.ToResult());
+            // Assert
+            Assert.NotNull(sut);
+            Assert.Equal(720, sut.ToResult());
+        }
     }
 }

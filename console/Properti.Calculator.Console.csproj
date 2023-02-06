@@ -2,16 +2,18 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net7.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
+    <TargetFrameworks>net5.0;net7.0</TargetFrameworks>
+    <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>disable</Nullable>
     <AssemblyName>RamanM.Properti.Calculator.Console</AssemblyName>
     <RootNamespace>RamanM.Properti.Calculator.Console</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="RoslynTest.csharp" />
-    <Content Include="RoslynTest.csharp" CopyToOutputDirectory="PreserveNewest" />
+    <None Remove="Roslyn\Test1.csharp" />
+    <None Remove="Roslyn\Test2.csharp" />
+    <Content Include="Roslyn\Test1.csharp" CopyToOutputDirectory="Always" />
+    <Content Include="Roslyn\Test2.csharp" CopyToOutputDirectory="Always" />
   </ItemGroup>
 
   <ItemGroup>

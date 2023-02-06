@@ -1,11 +1,12 @@
-﻿namespace RamanM.Properti.Calculator.Interfaces;
-
-public interface IConsoleWriting
+﻿namespace RamanM.Properti.Calculator.Interfaces
 {
-    void Write(string value);
-    void Write(object value);
+    public interface IConsoleWriting
+    {
+        void Write(string value);
+        void Write(object value);
 
-    void WriteLine();
-    void WriteLine(string value);
-    void WriteLine(object value);
+        void WriteLine();
+        void WriteLine(string value);
+        void WriteLine(object value);
+    }
 }
