@@ -1,27 +1,50 @@
-﻿
-using Basic.Reference.Assemblies;
-using Microsoft.CodeAnalysis;
+﻿using Basic.Reference.Assemblies;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis;
 using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Data;
 using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Roslyn.CodeDom
+namespace RamanM.Properti.Calculator.Console.Roslyn
 {
-    public class RoslynCodeCompiler : ICodeCompiler
+    public class RoslynService : ICodeCompiler
     {
-        public TargetFramework TargetFramework { get; }
+        public ReferenceAssemblyKind TargetFramework { get; }
 
-        public RoslynCodeCompiler(TargetFramework targetFramework)
+        public RoslynService(ReferenceAssemblyKind target)
         {
-            TargetFramework = targetFramework;
+            TargetFramework = target;
+        }
+
+        public CompilerResults CompileAssemblyFromDom(CompilerParameters options, CodeCompileUnit compilationUnit)
+        {
+            throw new NotImplementedException();
+        }
+
+        public CompilerResults CompileAssemblyFromDomBatch(CompilerParameters options, CodeCompileUnit[] compilationUnits)
+        {
+            throw new NotImplementedException();
+        }
+
+        public CompilerResults CompileAssemblyFromFile(CompilerParameters options, string fileName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public CompilerResults CompileAssemblyFromFileBatch(CompilerParameters options, string[] fileNames)
+        {
+            throw new NotImplementedException();
+        }
+
+        public CompilerResults CompileAssemblyFromSource(CompilerParameters options, string source)
+        {
+            return CompileAssemblyFromSourceBatch(options, new[] { source });
         }
 
         public CompilerResults CompileAssemblyFromSourceBatch(CompilerParameters options, string[] sources)
@@ -30,7 +53,7 @@ namespace Roslyn.CodeDom
                 .Create(
                     Path.GetFileName(options.OutputAssembly),
                     syntaxTrees: sources.Select(x => CSharpSyntaxTree.ParseText(x)))
-                .WithFrameworkReferences(TargetFramework);
+                .WithReferenceAssemblies(TargetFramework);
 
             var compilerResults = new CompilerResults(new TempFileCollection());
             AppendDiagnostics(compilation.GetDiagnostics());
@@ -70,35 +93,5 @@ namespace Roslyn.CodeDom
                 }
             }
         }
-
-        #region ICodeCompiler
-
-        CompilerResults ICodeCompiler.CompileAssemblyFromDom(CompilerParameters options, CodeCompileUnit compilationUnit)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        CompilerResults ICodeCompiler.CompileAssemblyFromDomBatch(CompilerParameters options, CodeCompileUnit[] compilationUnits)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        CompilerResults ICodeCompiler.CompileAssemblyFromFile(CompilerParameters options, string fileName)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        CompilerResults ICodeCompiler.CompileAssemblyFromFileBatch(CompilerParameters options, string[] fileNames)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        CompilerResults ICodeCompiler.CompileAssemblyFromSource(CompilerParameters options, string source) =>
-            CompileAssemblyFromSourceBatch(options, new[] { source });
-
-        CompilerResults ICodeCompiler.CompileAssemblyFromSourceBatch(CompilerParameters options, string[] sources) =>
-            CompileAssemblyFromSourceBatch(options, sources);
-
-        #endregion
     }
 }

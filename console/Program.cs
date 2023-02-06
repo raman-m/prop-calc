@@ -96,7 +96,7 @@ internal class Program
         console.WriteLine();
         console.WriteLine($"[{testName}]: With references");
         indent = "  ";
-        references = new string[] { "d:\\github\\prop-calc\\console\\bin\\Debug\\net7.0\\RamanM.Properti.Calculator.dll" }; //{ Path.Combine(baseDir, "Test1.dll") };
+        references = new string[] { "d:\\github\\prop-calc\\console\\bin\\Debug\\net5.0\\RamanM.Properti.Calculator.dll" }; //{ Path.Combine(baseDir, "Test1.dll") };
         path = calculator.CompileFile(baseDir, typeName + ".csharp", references, indent);
 
     }

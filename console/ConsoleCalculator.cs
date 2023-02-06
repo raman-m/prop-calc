@@ -1,16 +1,13 @@
-﻿using System;
+﻿using Basic.Reference.Assemblies;
+using RamanM.Properti.Calculator.Console.Interfaces;
+using RamanM.Properti.Calculator.Console.Roslyn;
+using RamanM.Properti.Calculator.Implementations;
+using System;
 using System.CodeDom.Compiler;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using RamanM.Properti.Calculator.Console.Interfaces;
-using RamanM.Properti.Calculator.Implementations;
-using RamanM.Properti.Calculator.Interfaces;
-using Roslyn.CodeDom;
 
 namespace RamanM.Properti.Calculator.Console
 {
@@ -26,10 +23,19 @@ namespace RamanM.Properti.Calculator.Console
 
         public void Welcome(Assembly app)
         {
-            var programName = app.GetName().Name.Replace(".", " ");
-
-            //console.WriteLine();
+#if NET7_0
+            var version = ".NET 7";
+#elif NET6_0
+            var version = ".NET 6";
+#elif NET5_0
+            var version = ".NET 5";
+#else
+            var version = ".NET < 5";
+#endif
             console.Color = ConsoleColor.Gray;
+            console.WriteLine(version);
+
+            var programName = app.GetName().Name.Replace(".", " ");
             console.WriteLine(app.FullName);
 
             var anchor = typeof(Sum);
@@ -193,10 +199,10 @@ namespace RamanM.Properti.Calculator.Console
             return toFile;
         }
 
-        public void Compile(string csharp, string toFile, string[] refs, string indent = "")
+        public void Compile(string csharp, string toFile, string[] references = null, string indent = "")
         {
 
-            string[] referenceAssemblies = refs; //{ "System.dll", "System.Runtime.dll" };
+            string[] referenceAssemblies = references ?? Array.Empty<string>();
             var options = new CompilerParameters(referenceAssemblies, toFile, true);
             options.GenerateExecutable = false;
             options.OutputAssembly = toFile;
@@ -204,8 +210,9 @@ namespace RamanM.Properti.Calculator.Console
 
             var stopWatch = new Stopwatch();
             stopWatch.Start();
-            var provider = new RoslynCodeDomProvider(TargetFramework.Net50);
-            var results = provider.CompileAssemblyFromSource(options, new[] { csharp });
+            //var provider = new RoslynCodeDomProvider(TargetFramework.Net50);
+            var roslyn = new RoslynService(ReferenceAssemblyKind.Net60);
+            var results = roslyn.CompileAssemblyFromSource(options, csharp);
             //var results = provider.CompileAssemblyFromFile(options, new[] { csFile });
             stopWatch.Stop();
             TimeSpan ts = stopWatch.Elapsed;
