@@ -52,13 +52,23 @@ namespace RamanM.Properti.Calculator.Console.Roslyn
             return CompileAssembly(options, sources);
         }
 
+        public CompilerResults CompileAssembly(CompilerParameters options, string source, string[] references = null)
+        {
+            return CompileAssembly(options, new[] { source }, references);
+        }
+
         public CompilerResults CompileAssembly(CompilerParameters options, string[] sources, string[] references = null)
         {
             var defaultRefs = new[] {
                 typeof(object).Assembly.Location, // System.Runtime.dll, namespace System
-                typeof(Enumerable).Assembly.Location // System.Linq.dll
+                //typeof(Enumerable).Assembly.Location // System.Linq.dll
             };
-            options.ReferencedAssemblies.AddRange(references?.Length > 0 ? references : defaultRefs);
+            var refs = references ?? defaultRefs;
+            foreach (string dllPath in refs)
+            {
+                if (!options.ReferencedAssemblies.Contains(dllPath))
+                    options.ReferencedAssemblies.Add(dllPath);
+            }
             var metaReferences = options.ReferencedAssemblies
                 .Cast<string>()
                 .Select(asm => MetadataReference.CreateFromFile(asm))
@@ -66,8 +76,8 @@ namespace RamanM.Properti.Calculator.Console.Roslyn
             var compilation = CSharpCompilation.Create(
                 Path.GetFileName(options.OutputAssembly),
                 syntaxTrees: sources.Select(x => CSharpSyntaxTree.ParseText(x)),
-                metaReferences,
-                new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+                references: metaReferences,
+                options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
             _ = compilation.WithReferenceAssemblies(TargetFramework);
 
             return Compile(compilation, options);

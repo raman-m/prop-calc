@@ -1,0 +1,12 @@
+﻿using RamanM.Properti.Calculator.Implementations;
+
+namespace Roslyn
+{
+    public class OperationSample
+    {
+        public static object Perform()
+        {
+            return {0};
+        }
+    }
+}

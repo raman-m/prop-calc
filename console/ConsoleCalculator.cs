@@ -219,7 +219,11 @@ namespace RamanM.Properti.Calculator.Console
             stopWatch.Start();
 
             var roslyn = new RoslynService(ReferenceAssemblyKind.Net60);
-            var results = roslyn.CompileAssemblyFromSource(options, csharp);
+            CompilerResults results;
+            if (references == null || references.Length == 0)
+                results = roslyn.CompileAssemblyFromSource(options, csharp);
+            else
+                results = roslyn.CompileAssembly(options, csharp, references);
 
             stopWatch.Stop();
             TimeSpan ts = stopWatch.Elapsed;

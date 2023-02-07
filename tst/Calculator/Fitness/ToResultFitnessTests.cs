@@ -1,11 +1,14 @@
 ﻿using RamanM.Properti.Calculator.Implementations;
+using RamanM.Properti.Calculator.Interfaces;
 using Xunit;
 
 namespace RamanM.Properti.Calculator.Tests.Fitness
 {
     public class ToResultFitnessTests
     {
-        [Fact(DisplayName = "new Sum(5.2, 1.5).toResult() should return 6.7")]
+        const string toResult = nameof(IResultant.ToResult);
+
+        [Fact(DisplayName = "new Sum(5.2, 1.5)." + toResult + "() should return 6.7")]
         public void Sum_ToResult_Example_ReturnsTheSum()
         {
             // Arrange
@@ -19,7 +22,7 @@ namespace RamanM.Properti.Calculator.Tests.Fitness
             Assert.Equal(expected, actual);
         }
 
-        [Fact(DisplayName = "new Division(30, new Sum(2, 3)).toResult() should return 6")]
+        [Fact(DisplayName = "new Division(30, new Sum(2, 3))." + toResult + "() should return 6")]
         public void Division_ToResult_ExampleWithSum_ReturnsTheQuotient()
         {
             // Arrange
@@ -33,7 +36,7 @@ namespace RamanM.Properti.Calculator.Tests.Fitness
             Assert.Equal(expected, actual);
         }
 
-        [Fact(DisplayName = "new Faculty(4).toResult() should return 24")]
+        [Fact(DisplayName = "new Faculty(4)." + toResult + "() should return 24")]
         public void Faculty_ToResult_Example_ReturnsTheFactorial()
         {
             // Arrange
@@ -47,7 +50,7 @@ namespace RamanM.Properti.Calculator.Tests.Fitness
             Assert.Equal(expected, actual);
         }
 
-        [Fact(DisplayName = "new Multiplication(new Fraction(9,4), new Fraction(2,3)).toResult() should return 1.5")]
+        [Fact(DisplayName = "new Multiplication(new Fraction(9,4), new Fraction(2,3))." + toResult + "() should return 1.5")]
         public void Multiplication_ToResult_ExampleWithFractions_ReturnsTheProduct()
         {
             // Arrange

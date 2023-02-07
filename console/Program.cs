@@ -1,8 +1,11 @@
-﻿using RamanM.Properti.Calculator.Console;
+﻿using Microsoft.VisualStudio.TestPlatform.ObjectModel;
+using RamanM.Properti.Calculator.Console;
 using RamanM.Properti.Calculator.Console.Interfaces;
+using RamanM.Properti.Calculator.Interfaces;
 using RamanM.Properti.Calculator.Tests;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Metrics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -113,10 +116,10 @@ internal class Program
 
         var action = calculator.UserAction(actions, 0);
         var fitness = fitnessTypes[action];
-        PerformFitnessTests(calculator, console, fitness, action);
+        PerformFitnessTests(calculator, console, fitness, basePath);
     }
 
-    internal static void PerformFitnessTests(ConsoleCalculator calculator, IConsoleService console, Type fitness, int selected)
+    internal static void PerformFitnessTests(ConsoleCalculator calculator, IConsoleService console, Type fitness, string basePath)
     {
         var tests = fitness.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
         var names = tests.Select(t => t.Name).ToList();
@@ -170,6 +173,40 @@ internal class Program
         console.Write($"{indent}Operation C# : ");
         console.Background = ConsoleColor.DarkBlue; console.Write(operation);
         console.ResetColor(); console.WriteLine(' ');
+
+        console.WriteLine();
+        console.Write($"{indent}Running unit test... ");
+        var instance = Activator.CreateInstance(fitness);
+        var success = true;
+        string status = null;
+        try { test.Invoke(instance, new object[0]); }
+        catch (Exception e) { success = false; status = e.Message; }
+        PrintSuccess(console, success);
+
+        string baseDir = Path.Combine(basePath, "Roslyn");
+        console.WriteLine($"{indent}Compiling C# operation... ");
+
+        var calcAsm = typeof(IBinaryOperation).Assembly;
+        var assemblies = new List<Assembly>();
+        AddReferencedAssemblies(calcAsm, assemblies);
+
+        string[] references = assemblies.Select(a => a.Location).Distinct().ToArray();
+        var csFile = Path.Combine(baseDir, "OperationSample.csharp");
+        string csharpFormat = File.ReadAllText(csFile);
+        string csharp = csharpFormat.Replace("{0}", operation);
+        var toFile = Path.Combine(baseDir, "OperationSample.dll");
+        string path = calculator.Compile(csharp, toFile, references, indent + indent);
+    }
+
+    private static void AddReferencedAssemblies(Assembly master, List<Assembly> list)
+    {
+        list.Add(master);
+        var refs = master.GetReferencedAssemblies();
+        foreach (AssemblyName @ref in refs)
+        {
+            var assmbl = Assembly.Load(@ref.FullName);
+            AddReferencedAssemblies(assmbl, list);
+        }
     }
 
     internal static void RunCompilationTests(ConsoleCalculator calculator, IConsoleService console, string currentDir)
@@ -186,7 +223,14 @@ internal class Program
 
         typeName = "Test2";
         testName = StartTest(console, typeName, "[{0}]: With references");
-        references = new string[] { Path.Combine(baseDir, "Test1.dll") };
+
+        var refAsm = Assembly.LoadFrom(Path.Combine(baseDir, "Test1.dll"));
+        var systemRefs = refAsm.GetReferencedAssemblies();
+        var assemblies = new List<Assembly>() { refAsm };
+        foreach (AssemblyName asm in systemRefs)
+            assemblies.Add(Assembly.Load(asm.FullName));
+        references = assemblies.Select(a => a.Location).ToArray();
+        //references = new string[] { Path.Combine(baseDir, "Test1.dll") };
         path = calculator.CompileFile(baseDir, typeName + ".csharp", references, indent);
         PrintTest(console, typeName, testName, path, indent);
     }
@@ -233,13 +277,20 @@ internal class Program
             status = "Compilation failed!";
             success = false;
         }
-        console.Color = success ? ConsoleColor.Green : ConsoleColor.Red;
-        console.WriteLine(indent + status);
-        console.Color = ConsoleColor.White;
-        var result = success ? "Success" : "Failed";
+        PrintSuccess(console, success, status, indent);
         console.Write($"{testName}: ");
+        PrintSuccess(console, success);
+    }
+
+    private static void PrintSuccess(IConsoleService console, bool success, string status = null, string indent = null, bool? newLine = null)
+    {
+        var statusName = status ?? (success ? "Success" : "Failed");
+        var prefix = indent ?? string.Empty;
+        var nline = newLine ?? true;
         console.Color = success ? ConsoleColor.Green : ConsoleColor.Red;
-        console.WriteLine(result);
+        console.Write(prefix + statusName);
         console.Color = ConsoleColor.White;
+        if (nline)
+            console.WriteLine();
     }
 }

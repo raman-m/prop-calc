@@ -1,11 +1,14 @@
 ﻿using RamanM.Properti.Calculator.Implementations;
+using RamanM.Properti.Calculator.Interfaces;
 using Xunit;
 
 namespace RamanM.Properti.Calculator.Tests.Fitness
 {
     public class PrintFitnessTests
     {
-        [Fact(DisplayName = "new Sum(5.2, 1.5).print() should return '(5.2 + 1.5) = 6.7'")]
+        const string print = nameof(IPrintable.Print);
+
+        [Fact(DisplayName = "new Sum(5.2, 1.5)." + print + "() should return '(5.2 + 1.5) = 6.7'")]
         public void Sum_Print_Example_PrintsFinalEquality()
         {
             // Arrange
@@ -19,7 +22,7 @@ namespace RamanM.Properti.Calculator.Tests.Fitness
             Assert.Equal(expected, actual);
         }
 
-        [Fact(DisplayName = "new Division(30, new Sum(2, 3)).print() should return '(30 / (2 + 3)) = 6'")]
+        [Fact(DisplayName = "new Division(30, new Sum(2, 3))." + print + "() should return '(30 / (2 + 3)) = 6'")]
         public void Division_Print_ExampleWithSum_PrintsFinalEquality()
         {
             // Arrange
@@ -33,7 +36,7 @@ namespace RamanM.Properti.Calculator.Tests.Fitness
             Assert.Equal(expected, actual);
         }
 
-        [Fact(DisplayName = "new Faculty(4).print() should return '(4!) = 24'")]
+        [Fact(DisplayName = "new Faculty(4)." + print + "() should return '(4!) = 24'")]
         public void Faculty_Print_Example_PrintsFinalEquality()
         {
             // Arrange
@@ -47,7 +50,7 @@ namespace RamanM.Properti.Calculator.Tests.Fitness
             Assert.Equal(expected, actual);
         }
 
-        [Fact(DisplayName = "new Multiplication(new Fraction(9,4), new Fraction(2,3)).print() should return '((9/4) * (2/3)) = 1.5'")]
+        [Fact(DisplayName = "new Multiplication(new Fraction(9,4), new Fraction(2,3))." + print + "() should return '((9/4) * (2/3)) = 1.5'")]
         public void Multiplication_Print_ExampleWithFractions_PrintsFinalEquality()
         {
             // Arrange
