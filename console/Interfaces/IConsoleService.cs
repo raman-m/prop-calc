@@ -11,6 +11,9 @@ namespace RamanM.Properti.Calculator.Console.Interfaces
         void Clear();
 
         ConsoleColor Color { get; set; }
+        ConsoleColor Background { get; set; }
+        void ResetColor();
+
         (int Left, int Top) GetCursor();
         void SetCursor(int left, int top);
 

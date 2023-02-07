@@ -100,14 +100,21 @@ namespace RamanM.Properti.Calculator.Console
                 top--;
         }
 
-        protected void PrintAction(string action, ConsoleColor color, int line)
+        protected void PrintAction(string action, ConsoleColor color)
         {
+            var max = console.BufferWidth;
             console.Color = color;
-            console.SetCursor(0, line);
-            console.Write(action);
+            console.Write(action.Length <= max ? action : action.Substring(0, max));
         }
 
-        protected const string Pointer = "-> ";
+        protected void PrintAction(string action, ConsoleColor color, int line)
+        {
+            console.SetCursor(0, line);
+            PrintAction(action, color);
+        }
+
+        public const string Pointer         = "-> ";
+        public const string PointerIndent   = "   ";
 
         protected void PointToAction(string[] actions, int to, ConsoleColor color, int line)
         {
@@ -116,16 +123,17 @@ namespace RamanM.Properti.Calculator.Console
             PrintAction(pointTo, color, line);
         }
 
-        public int UserAction(string[] actions, int selected)
+        public int UserAction(string[] actions, int selected, string header = null)
         {
             console.CursorVisible = false;
             console.WriteLine();
-            console.WriteLine("Your next action?");
+            console.WriteLine(header ?? "Your next action?");
             var start = console.GetCursor();
             foreach (var action in actions)
             {
                 EnsureScrolling(ref start.Top); // scroll start position with window log
-                console.WriteLine(action);
+                PrintAction(action, ConsoleColor.White);
+                console.WriteLine();
             }
             console.Color = ConsoleColor.DarkGray;
             console.Write("Use arrows [Up, Down] to make the choice, and press Enter... ");

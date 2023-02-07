@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\src\Calculator\Properti.Calculator.csproj" />
+    <ProjectReference Include="..\tst\Calculator\Properti.Calculator.Tests.csproj" />
   </ItemGroup>
 
 </Project>

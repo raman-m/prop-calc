@@ -7,6 +7,9 @@ namespace RamanM.Properti.Calculator.Console
     public class ConsoleService : IConsoleService
     {
         public ConsoleColor Color { get => Cns.ForegroundColor; set => Cns.ForegroundColor = value; }
+        public ConsoleColor Background { get => Cns.BackgroundColor; set => Cns.BackgroundColor = value; }
+        public void ResetColor() => Cns.ResetColor();
+
 
         public int BufferWidth { get => Cns.BufferWidth; set => Cns.BufferWidth = value; }
         public int BufferHeight { get => Cns.BufferHeight; set => Cns.BufferHeight = value; }

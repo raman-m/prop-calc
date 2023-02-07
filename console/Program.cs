@@ -1,22 +1,66 @@
 ﻿using RamanM.Properti.Calculator.Console;
 using RamanM.Properti.Calculator.Console.Interfaces;
+using RamanM.Properti.Calculator.Tests;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Xunit;
+using Xunit.Abstractions;
 
 internal class Program
 {
     private static string[] userActions = new string[]
     {
         "   (1) Run basic compilation tests (no expressions)",
-        "   (2) Run and compile examples of operations",
+        "   (2) Run and compile examples of operations (fitness tests)",
         "   (3) Add our own testing expressions, compile and run",
         "   (4) Skip and quit this session",
     };
 
+    static void ShowColors()
+    {
+        // Get an array with the values of ConsoleColor enumeration members.
+        ConsoleColor[] colors = (ConsoleColor[])ConsoleColor.GetValues(typeof(ConsoleColor));
+        // Save the current background and foreground colors.
+        ConsoleColor currentBackground = Console.BackgroundColor;
+        ConsoleColor currentForeground = Console.ForegroundColor;
+
+        // Display all foreground colors except the one that matches the background.
+        Console.WriteLine("All the foreground colors except {0}, the background color:",
+                          currentBackground);
+        foreach (var color in colors)
+        {
+            if (color == currentBackground) continue;
+
+            Console.ForegroundColor = color;
+            Console.WriteLine("   The foreground color is {0}.", color);
+        }
+        Console.WriteLine();
+        // Restore the foreground color.
+        Console.ForegroundColor = currentForeground;
+
+        // Display each background color except the one that matches the current foreground color.
+        Console.WriteLine("All the background colors except {0}, the foreground color:",
+                          currentForeground);
+        foreach (var color in colors)
+        {
+            if (color == currentForeground) continue;
+
+            Console.BackgroundColor = color;
+            Console.WriteLine("   The background color is {0}.", color);
+        }
+
+        // Restore the original console colors.
+        Console.ResetColor();
+        Console.WriteLine("\nOriginal colors restored...");
+    }
+
     static void Main(string[] args)
     {
+        //ShowColors();
+
         var console = new ConsoleService();
         var calculator = new ConsoleCalculator(console);
 
@@ -33,6 +77,9 @@ internal class Program
                 case 1:
                     RunCompilationTests(calculator, console, currentDir);
                     break;
+                case 2:
+                    RunFitnessTests(calculator, console, currentDir);
+                    break;
                 case 4:
                     console.WriteLine("Skipped");
                     break;
@@ -44,6 +91,85 @@ internal class Program
             bool quit = calculator.WaitUser();
             if (quit) break;
         }
+    }
+
+    internal static void RunFitnessTests(ConsoleCalculator calculator, IConsoleService console, string basePath)
+    {
+        console.WriteLine();
+        console.Write("Loading fitness tests... ");
+        var refAsm = typeof(SumTests).Assembly;
+
+        var fitnessTypes = refAsm.GetTypes()
+            .Where(t => t.Namespace?.Contains(".Fitness") ?? false)
+            //.Select(t => t.Name)
+            .ToArray();
+        string[] actions = fitnessTypes
+            .Select(t => t.Name)
+            .Select(c => new { before = c.IndexOf("Fitness"), after = c.IndexOf("Fitness") + "Fitness".Length, name = c })
+            .Select(a => new { method = a.name.Substring(0, a.before), suffix = a.name.Substring(a.before).ToLower().Insert(a.after - a.before, " ") })
+            .Select(b => $"{ConsoleCalculator.PointerIndent}Perform {b.method} {b.suffix}")
+            .ToArray();
+        console.WriteLine("Done");
+
+        var action = calculator.UserAction(actions, 0);
+        var fitness = fitnessTypes[action];
+        PerformFitnessTests(calculator, console, fitness, action);
+    }
+
+    internal static void PerformFitnessTests(ConsoleCalculator calculator, IConsoleService console, Type fitness, int selected)
+    {
+        var tests = fitness.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+        var names = tests.Select(t => t.Name).ToList();
+        console.WriteLine();
+        console.Color = ConsoleColor.White;
+        console.Write("The ");
+        console.Color = ConsoleColor.Yellow;
+        console.Write(fitness.Name);
+        console.Color = ConsoleColor.White;
+        console.WriteLine(" class tests:");
+        foreach (var name in names)
+        {
+            console.Color = ConsoleColor.White;
+            console.Write($"{ConsoleCalculator.PointerIndent}({names.IndexOf(name) + 1}) ");
+            console.Color = ConsoleColor.Blue;
+            console.WriteLine(name);
+        }
+        console.Color = ConsoleColor.White;
+        string[] actions = tests
+            .Select(m => new
+            {
+                indent = ConsoleCalculator.PointerIndent,
+                index = Array.IndexOf(tests, m),
+                display = m.GetCustomAttribute<FactAttribute>().DisplayName
+            })
+            .Select(a => $"{a.indent}({a.index + 1}) {a.display}")
+            .ToArray();
+        var action = calculator.UserAction(actions, 0, "Select the test to perform:");
+        var test = tests.Single(t => t.Name == names[action]);
+        console.WriteLine();
+        console.WriteLine($"Performing the test #{action + 1}...");
+        var indent = "  ";
+
+        console.Write($"{indent}Test name: ");
+        console.Color = ConsoleColor.Blue;
+        console.WriteLine(test.Name);
+        console.ResetColor();
+
+        var assertion = test.GetCustomAttribute<FactAttribute>().DisplayName;
+        console.Write($"{indent}Assertion: ");
+        console.Background = ConsoleColor.DarkGray; console.Write(assertion);
+        console.ResetColor(); console.WriteLine(' ');
+
+        var parts = assertion.Split("should return");
+        var expected = parts[1].Trim(new char[] { ' ', '\'' });
+        console.Write($"{indent}Expected value: ");
+        console.Background = ConsoleColor.DarkGray; console.Write(expected);
+        console.ResetColor(); console.WriteLine(' ');
+
+        var operation = parts[0].Trim(); // C# code
+        console.Write($"{indent}Operation C# : ");
+        console.Background = ConsoleColor.DarkBlue; console.Write(operation);
+        console.ResetColor(); console.WriteLine(' ');
     }
 
     internal static void RunCompilationTests(ConsoleCalculator calculator, IConsoleService console, string currentDir)
