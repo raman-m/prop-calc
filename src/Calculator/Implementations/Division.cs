@@ -11,15 +11,18 @@ namespace RamanM.Properti.Calculator.Implementations
         public Division(double left, double right)
             : base(left, right) { }
 
+        public Division(IOperation left, double right)
+            : base(left, right) { }
         public Division(IOperation<double> left, double right)
             : base(left, right) { }
 
+        public Division(double left, IOperation right)
+            : base(left, right) { }
         public Division(double left, IOperation<double> right)
             : base(left, right) { }
 
         public Division(IOperation left, IOperation right)
             : base(left, right) { }
-
         public Division(IOperation<double> left, IOperation<double> right)
             : base(left, right) { }
 

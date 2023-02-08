@@ -11,15 +11,18 @@ namespace RamanM.Properti.Calculator.Implementations
         public Multiplication(double left, double right)
             : base(left, right) { }
 
+        public Multiplication(IOperation left, double right)
+            : base(left, right) { }
         public Multiplication(IOperation<double> left, double right)
             : base(left, right) { }
 
+        public Multiplication(double left, IOperation right)
+            : base(left, right) { }
         public Multiplication(double left, IOperation<double> right)
             : base(left, right) { }
 
         public Multiplication(IOperation left, IOperation right)
             : base(left, right) { }
-
         public Multiplication(IOperation<double> left, IOperation<double> right)
             : base(left, right) { }
 

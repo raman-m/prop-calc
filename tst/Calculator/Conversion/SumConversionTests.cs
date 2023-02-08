@@ -111,5 +111,16 @@ namespace RamanM.Properti.Calculator.Tests.Conversion
             Assert.NotNull(sut);
             Assert.Equal(30, sut.ToResult());
         }
+
+        [Fact]
+        public void Sum_ImplicitConversionOfFacultyAndConst_ReturnsSumObject()
+        {
+            // Arrange, Act
+            var sut = new Sum(new Faculty(8), 1);
+
+            // Assert
+            Assert.NotNull(sut);
+            Assert.Equal(40321, sut.ToResult());
+        }
     }
 }

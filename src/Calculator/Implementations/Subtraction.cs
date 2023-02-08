@@ -14,15 +14,18 @@ namespace RamanM.Properti.Calculator.Implementations
         public Subtraction(double left, double right)
             : base(left, right) { }
 
+        public Subtraction(IOperation left, double right)
+           : base(left, right) { }
         public Subtraction(IOperation<double> left, double right)
             : base(left, right) { }
 
+        public Subtraction(double left, IOperation right)
+            : base(left, right) { }
         public Subtraction(double left, IOperation<double> right)
             : base(left, right) { }
 
         public Subtraction(IOperation left, IOperation right)
            : base(left, right) { }
-
         public Subtraction(IOperation<double> left, IOperation<double> right)
            : base(left, right) { }
 

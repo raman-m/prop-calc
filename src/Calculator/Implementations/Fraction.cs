@@ -11,15 +11,18 @@ namespace RamanM.Properti.Calculator.Implementations
         public Fraction(int left, int right)
             : base(left, right) { }
 
+        public Fraction(IOperation left, int right)
+            : base(left, right) { }
         public Fraction(IOperation<int> left, int right)
             : base(left, right) { }
 
+        public Fraction(int left, IOperation right)
+            : base(left, right) { }
         public Fraction(int left, IOperation<int> right)
             : base(left, right) { }
 
         public Fraction(IOperation left, IOperation right)
             : base(left, right) { }
-
         public Fraction(IOperation<int> left, IOperation<int> right)
             : base(left, right) { }
 

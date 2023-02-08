@@ -14,15 +14,18 @@ namespace RamanM.Properti.Calculator.Implementations
         public Sum(double left, double right)
             : base(left, right) { }
 
+        public Sum(IOperation left, double right)
+            : base(left, right) { }
         public Sum(IOperation<double> left, double right)
             : base(left, right) { }
 
+        public Sum(double left, IOperation right)
+            : base(left, right) { }
         public Sum(double left, IOperation<double> right)
             : base(left, right) { }
 
         public Sum(IOperation left, IOperation right)
             : base(left, right) { }
-
         public Sum(IOperation<double> left, IOperation<double> right)
             : base(left, right) { }
 
