@@ -104,12 +104,12 @@ namespace RamanM.Properti.Calculator.Console
                 ConsoleKeyInfo info = console.ReadKey(true);
                 if (info.Key == ConsoleKey.Y)
                 {
-                    console.WriteLine(nameof(ConsoleKey.Y));
+                    console.Write(nameof(ConsoleKey.Y));
                     return true;
                 }
                 else if (info.Key == ConsoleKey.N)
                 {
-                    console.WriteLine(nameof(ConsoleKey.N));
+                    console.Write(nameof(ConsoleKey.N));
                     return false;
                 }
                 else

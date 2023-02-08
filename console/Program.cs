@@ -3,9 +3,11 @@ using RamanM.Properti.Calculator.Console.Interfaces;
 using RamanM.Properti.Calculator.Interfaces;
 using RamanM.Properti.Calculator.Tests;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using Xunit;
 
@@ -58,26 +60,58 @@ internal class Program
 
     internal static void RunCustomTests(ConsoleCalculator calculator, IConsoleService console, string basePath)
     {
+        while (true)
+        {
+            var expression = AskExpression(calculator, console);
+            var result = EvaluateExpression(calculator, console, expression, basePath);
+            console.ResetColor();
+            console.Write("Result: ");
+            PrintLineOnBackground(console, result, ConsoleColor.DarkBlue);
+            console.WriteLine();
+            var yes = calculator.AskYesNo("Going to test new expression?");
+            if (!yes)
+                break;
+        }
+    }
+
+    internal static string AskExpression(ConsoleCalculator calculator, IConsoleService console)
+    {
         console.WriteLine();
         console.WriteLine("Enter your C# expression with defined operations:");
         var start = console.GetCursor();
         console.Color = ConsoleColor.DarkBlue;
         console.Write("> ");
         console.Color = ConsoleColor.Blue;
+        EnsureScrolling(console, ref start.Top);
         var expression = console.ReadLine();
         console.Color = ConsoleColor.White;
         while (!calculator.AskYesNo("Is it final and correct?"))
         {
             console.SetCursor(start.Left, start.Top);
+            EnsureScrolling(console, ref start.Top);
             expression = ReadLine(console, expression); //console.ReadLine();
             console.ResetColor();
         }
-        var indent = "  ";
+        return expression;
+    }
+
+    internal static string EvaluateExpression(ConsoleCalculator calculator, IConsoleService console, string expression, string basePath, string indent = null)
+    {
+        indent = indent ?? "  ";
+        console.WriteLine();
+        console.WriteLine();
         console.Write("Evaluating of operations expression... ");
-        start = console.GetCursor();
+        var start = console.GetCursor();
+        EnsureScrolling(console, ref start.Top); console.WriteLine();
         console.Write($"{indent}Expression: ");
         PrintLineOnBackground(console, expression, ConsoleColor.DarkBlue);
 
+        var path = CompileExpression(calculator, console, expression, basePath, indent);
+        if (string.IsNullOrEmpty(path))
+            return string.Empty;
+
+        var evalValue = ReflectExpressionType(console, path, expression, indent);
+        return evalValue.ToString();
     }
 
     internal static void RunFitnessTests(ConsoleCalculator calculator, IConsoleService console, string basePath)
@@ -163,61 +197,19 @@ internal class Program
             PrintSuccess(console, false, e.Message);
         }
 
-        string baseDir = Path.Combine(basePath, "Roslyn");
-        console.WriteLine($"{indent}Compiling C# expression... ");
-
-        var calcAsm = typeof(IBinaryOperation).Assembly;
-        var assemblies = new List<Assembly>();
-        AddReferencedAssemblies(calcAsm, assemblies);
-
-        string[] references = assemblies.Select(a => a.Location).Distinct().ToArray();
-        var csFile = Path.Combine(baseDir, "OperationSample.csharp");
-        string csharpFormat = File.ReadAllText(csFile);
-        string csharp = csharpFormat.Replace("{0}", expression);
-        var toFile = Path.Combine(baseDir, $"OperationSample_{test.Name}.dll");
-        string path = calculator.Compile(csharp, toFile, references, indent + indent);
+        string path = CompileExpression(calculator, console, expression, basePath, indent);
         if (string.IsNullOrEmpty(path))
-        {
-            PrintSuccess(console, false, indent: indent);
             return;
-        }
 
-        console.Write($"{indent}Reflecting from {Path.GetFileName(path)}... ");
-        var operationAsm = Assembly.LoadFrom(path);
-        var type = operationAsm.GetType("Roslyn.OperationSample");
-        var run = type.GetMethod("Run");
-        console.WriteLine("Done");
-
-        console.Write($"{indent}Evaluating the expression... ");
-        var start = console.GetCursor();
-        EnsureScrolling(console, ref start.Top); console.WriteLine();
-        console.Write($"{indent+ indent}Expression: ");
-        EnsureScrolling(console, ref start.Top);
-        PrintLineOnBackground(console, expression, ConsoleColor.DarkBlue);
-        console.Write($"{indent + indent}Getting value... ");
-        string evalValue = string.Empty;
-        try
-        {
-            evalValue = run.Invoke(null, new object[0]).ToString();
-            EnsureScrolling(console, ref start.Top);
-            PrintLineOnBackground(console, evalValue, ConsoleColor.DarkBlue);
-            var current = console.GetCursor();
-            console.SetCursor(start.Left, start.Top);
-            console.Write("Done");
-            console.SetCursor(current.Left, current.Top);
-        }
-        catch (Exception e)
-        {
-            PrintSuccess(console, false, e.Message);
-        }
+        var evalValue = ReflectExpressionType(console, path, expression, indent);
 
         console.WriteLine($"{indent}Final asserting... ");
         console.Write($"{indent + indent}Expected: ");
         PrintLineOnBackground(console, expected, ConsoleColor.DarkGray);
         console.Write($"{indent + indent}  Actual: ");
-        PrintLineOnBackground(console, evalValue, ConsoleColor.DarkBlue);
+        PrintLineOnBackground(console, evalValue.ToString(), ConsoleColor.DarkBlue);
         console.Write($"{indent + indent}Assertion: ");
-        bool assert = expected.Equals( evalValue );
+        bool assert = expected.Equals( evalValue.ToString() );
         PrintSuccess(console, assert, assert.ToString());
 
         console.Write($"Test #{action + 1}... ");
@@ -233,6 +225,67 @@ internal class Program
             var assmbl = Assembly.Load(@ref.FullName);
             AddReferencedAssemblies(assmbl, list);
         }
+    }
+
+    internal static string CompileExpression(ConsoleCalculator calculator, IConsoleService console, string expression, string basePath, string indent = null)
+    {
+        string baseDir = Path.Combine(basePath, "Roslyn");
+        console.WriteLine($"{indent}Compiling C# expression... ");
+
+        var calcAsm = typeof(IBinaryOperation).Assembly;
+        var assemblies = new List<Assembly>();
+        AddReferencedAssemblies(calcAsm, assemblies);
+
+        string[] references = assemblies.Select(a => a.Location).Distinct().ToArray();
+        var csFile = Path.Combine(baseDir, "OperationSample.csharp");
+        string csharpFormat = File.ReadAllText(csFile);
+        string csharp = csharpFormat.Replace("{0}", expression);
+        var timeStamp = DateTime.Now.TimeOfDay.ToString().Replace(":", string.Empty);
+        var toFile = Path.Combine(baseDir, $"OperationSample_{timeStamp}.dll");
+        string path = calculator.Compile(csharp, toFile, references, indent + indent);
+        if (string.IsNullOrEmpty(path))
+            PrintSuccess(console, false, indent: indent);
+
+        return path;
+    }
+
+    internal static object ReflectExpressionType(IConsoleService console, string dllPath, string expression, string indent = null)
+    {
+        if (string.IsNullOrEmpty(dllPath))
+            return null;
+
+        if (!File.Exists(dllPath))
+            return null;
+
+        console.Write($"{indent}Reflecting from {Path.GetFileName(dllPath)}... ");
+        var operationAsm = Assembly.LoadFrom(dllPath);
+        var type = operationAsm.GetType("Roslyn.OperationSample");
+        var run = type.GetMethod("Run");
+        console.WriteLine("Done");
+
+        console.Write($"{indent}Evaluating the expression... ");
+        var start = console.GetCursor();
+        EnsureScrolling(console, ref start.Top); console.WriteLine();
+        console.Write($"{indent + indent}Expression: ");
+        EnsureScrolling(console, ref start.Top);
+        PrintLineOnBackground(console, expression, ConsoleColor.DarkBlue);
+        console.Write($"{indent + indent}Getting value... ");
+        object evalValue = string.Empty;
+        try
+        {
+            evalValue = run.Invoke(null, new object[0]);
+            EnsureScrolling(console, ref start.Top);
+            PrintLineOnBackground(console, evalValue.ToString(), ConsoleColor.DarkBlue);
+            var current = console.GetCursor();
+            console.SetCursor(start.Left, start.Top);
+            console.Write("Done");
+            console.SetCursor(current.Left, current.Top);
+        }
+        catch (Exception e)
+        {
+            PrintSuccess(console, false, e.Message);
+        }
+        return evalValue;
     }
 
     internal static void RunCompilationTests(ConsoleCalculator calculator, IConsoleService console, string currentDir)
