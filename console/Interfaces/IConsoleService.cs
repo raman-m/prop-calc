@@ -20,6 +20,8 @@ namespace RamanM.Properti.Calculator.Console.Interfaces
         int BufferWidth { get; set; }
         int BufferHeight { get; set; }
 
+        int WindowWidth { get; set; }
+
         int CursorLeft { get; set; }
         int CursorTop { get; set; }
 

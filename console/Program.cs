@@ -15,7 +15,7 @@ internal class Program
     {
         "   (1) Run basic compilation tests (no expressions)",
         "   (2) Run and compile examples of operations (fitness tests)",
-        "   (3) Add our own testing expressions, compile and run",
+        "   (3) Add your testing expressions, compile and evaluate",
         "   (4) Skip and quit this session",
     };
 
@@ -60,7 +60,23 @@ internal class Program
     {
         console.WriteLine();
         console.WriteLine("Enter your C# expression with defined operations:");
-        var expr = console.ReadLine();
+        var start = console.GetCursor();
+        console.Color = ConsoleColor.DarkBlue;
+        console.Write("> ");
+        console.Color = ConsoleColor.Blue;
+        var expression = console.ReadLine();
+        console.Color = ConsoleColor.White;
+        while (!calculator.AskYesNo("Is it final and correct?"))
+        {
+            console.SetCursor(start.Left, start.Top);
+            expression = ReadLine(console, expression); //console.ReadLine();
+            console.ResetColor();
+        }
+        var indent = "  ";
+        console.Write("Evaluating of operations expression... ");
+        start = console.GetCursor();
+        console.Write($"{indent}Expression: ");
+        PrintLineOnBackground(console, expression, ConsoleColor.DarkBlue);
 
     }
 
@@ -333,5 +349,79 @@ internal class Program
     {
         if (console.CursorTop >= console.BufferHeight - 1)
             top--;
+    }
+
+    public static string ReadLine(IConsoleService console, string defaultText, string caret = "> ")
+    {
+        //console.WriteLine(); // make sure we're on a fresh line
+        List<char> buffer = defaultText.ToCharArray().Take(console.WindowWidth - caret.Length - 1).ToList();
+        console.Color = ConsoleColor.DarkBlue;
+        console.Write(caret);
+        console.Color = ConsoleColor.Blue;
+        console.Write(new string(buffer.ToArray()));
+        //console.SetCursor(console.CursorLeft, console.CursorTop);
+
+        ConsoleKeyInfo info = new ConsoleKeyInfo('a', ConsoleKey.A, false, false, false); //console.ReadKey(true);
+        while (info.Key != ConsoleKey.Enter)
+        {
+            info = console.ReadKey(true);
+            switch (info.Key)
+            {
+                case ConsoleKey.Enter:
+                    continue;
+                case ConsoleKey.LeftArrow:
+                    console.SetCursor(Math.Max(console.CursorLeft - 1, caret.Length), console.CursorTop);
+                    break;
+                case ConsoleKey.RightArrow:
+                    console.SetCursor(Math.Min(console.CursorLeft + 1, caret.Length + buffer.Count), console.CursorTop);
+                    break;
+                case ConsoleKey.Home:
+                    console.SetCursor(caret.Length, console.CursorTop);
+                    break;
+                case ConsoleKey.End:
+                    console.SetCursor(caret.Length + buffer.Count, console.CursorTop);
+                    break;
+                case ConsoleKey.Backspace:
+                    if (console.CursorLeft <= caret.Length)
+                        break;
+                    var cursorColumnAfterBackspace = Math.Max(console.CursorLeft - 1, caret.Length);
+                    buffer.RemoveAt(console.CursorLeft - caret.Length - 1);
+                    RewriteLine(console, caret, buffer);
+                    console.SetCursor(cursorColumnAfterBackspace, console.CursorTop);
+                    break;
+                case ConsoleKey.Delete:
+                    if (console.CursorLeft >= caret.Length + buffer.Count)
+                        break;
+                    var cursorColumnAfterDelete = console.CursorLeft;
+                    buffer.RemoveAt(console.CursorLeft - caret.Length);
+                    RewriteLine(console, caret, buffer);
+                    console.SetCursor(cursorColumnAfterDelete, console.CursorTop);
+                    break;
+                default:
+                    var character = info.KeyChar;
+                    if (character < 32) // not a printable chars
+                        break;
+                    var cursorAfterNewChar = console.CursorLeft + 1;
+                    if (cursorAfterNewChar > console.WindowWidth || caret.Length + buffer.Count >= console.WindowWidth - 1)
+                        break; // currently only one line of input is supported
+                    buffer.Insert(console.CursorLeft - caret.Length, character);
+                    RewriteLine(console, caret, buffer);
+                    console.SetCursor(cursorAfterNewChar, console.CursorTop);
+                    break;
+            }
+        }
+        console.Write(Environment.NewLine);
+        return new string(buffer.ToArray());
+    }
+
+    private static void RewriteLine(IConsoleService console, string caret, List<char> buffer)
+    {
+        console.SetCursor(0, console.CursorTop);
+        console.Write(new string(' ', console.WindowWidth - 1));
+        console.SetCursor(0, console.CursorTop);
+        console.Color = ConsoleColor.DarkBlue;
+        console.Write(caret);
+        console.Color = ConsoleColor.Blue;
+        console.Write(new string(buffer.ToArray()));
     }
 }

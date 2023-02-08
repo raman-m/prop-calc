@@ -94,6 +94,31 @@ namespace RamanM.Properti.Calculator.Console
             return false;
         }
 
+        public bool AskYesNo(string asking = null)
+        {
+            var ask = asking ?? "Continue?";
+            console.Write($"{ask} (Y/N)  ");
+            console.CursorLeft--; // clear previous answer
+            while (true)
+            {
+                ConsoleKeyInfo info = console.ReadKey(true);
+                if (info.Key == ConsoleKey.Y)
+                {
+                    console.WriteLine(nameof(ConsoleKey.Y));
+                    return true;
+                }
+                else if (info.Key == ConsoleKey.N)
+                {
+                    console.WriteLine(nameof(ConsoleKey.N));
+                    return false;
+                }
+                else
+                {
+                    continue;
+                }
+            }
+        }
+
         protected void EnsureScrolling(ref int top)
         {
             if (console.CursorTop >= console.BufferHeight - 1)

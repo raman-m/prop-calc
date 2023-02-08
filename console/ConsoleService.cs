@@ -18,6 +18,7 @@ namespace RamanM.Properti.Calculator.Console
         public int CursorTop { get => Cns.CursorTop; set => Cns.CursorTop = value; }
 
         public bool CursorVisible { get => Cns.CursorVisible; set => Cns.CursorVisible = value; }
+        public int WindowWidth { get => Cns.WindowWidth; set => Cns.WindowWidth = value; }
 
         public void Beep() => Cns.Beep();
         public void Beep(int frequency, int duration) => Cns.Beep(frequency, duration);
