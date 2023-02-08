@@ -19,48 +19,8 @@ internal class Program
         "   (4) Skip and quit this session",
     };
 
-    static void ShowColors()
-    {
-        // Get an array with the values of ConsoleColor enumeration members.
-        ConsoleColor[] colors = (ConsoleColor[])ConsoleColor.GetValues(typeof(ConsoleColor));
-        // Save the current background and foreground colors.
-        ConsoleColor currentBackground = Console.BackgroundColor;
-        ConsoleColor currentForeground = Console.ForegroundColor;
-
-        // Display all foreground colors except the one that matches the background.
-        Console.WriteLine("All the foreground colors except {0}, the background color:",
-                          currentBackground);
-        foreach (var color in colors)
-        {
-            if (color == currentBackground) continue;
-
-            Console.ForegroundColor = color;
-            Console.WriteLine("   The foreground color is {0}.", color);
-        }
-        Console.WriteLine();
-        // Restore the foreground color.
-        Console.ForegroundColor = currentForeground;
-
-        // Display each background color except the one that matches the current foreground color.
-        Console.WriteLine("All the background colors except {0}, the foreground color:",
-                          currentForeground);
-        foreach (var color in colors)
-        {
-            if (color == currentForeground) continue;
-
-            Console.BackgroundColor = color;
-            Console.WriteLine("   The background color is {0}.", color);
-        }
-
-        // Restore the original console colors.
-        Console.ResetColor();
-        Console.WriteLine("\nOriginal colors restored...");
-    }
-
     static void Main(string[] args)
     {
-        //ShowColors();
-
         var console = new ConsoleService();
         var calculator = new ConsoleCalculator(console);
 
@@ -80,6 +40,9 @@ internal class Program
                 case 2:
                     RunFitnessTests(calculator, console, currentDir);
                     break;
+                case 3:
+                    RunCustomTests(calculator, console, currentDir);
+                    break;
                 case 4:
                     console.WriteLine("Skipped");
                     break;
@@ -91,6 +54,14 @@ internal class Program
             bool quit = calculator.WaitUser();
             if (quit) break;
         }
+    }
+
+    internal static void RunCustomTests(ConsoleCalculator calculator, IConsoleService console, string basePath)
+    {
+        console.WriteLine();
+        console.WriteLine("Enter your C# expression with defined operations:");
+        var expr = console.ReadLine();
+
     }
 
     internal static void RunFitnessTests(ConsoleCalculator calculator, IConsoleService console, string basePath)
