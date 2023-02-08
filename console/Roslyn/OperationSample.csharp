@@ -4,7 +4,9 @@ namespace Roslyn
 {
     public class OperationSample
     {
-        public static object Perform()
+        public const string Expression = "{0}";
+
+        public static object Run()
         {
             return {0};
         }

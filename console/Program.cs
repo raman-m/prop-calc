@@ -1,16 +1,13 @@
-﻿using Microsoft.VisualStudio.TestPlatform.ObjectModel;
-using RamanM.Properti.Calculator.Console;
+﻿using RamanM.Properti.Calculator.Console;
 using RamanM.Properti.Calculator.Console.Interfaces;
 using RamanM.Properti.Calculator.Interfaces;
 using RamanM.Properti.Calculator.Tests;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Metrics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using Xunit;
-using Xunit.Abstractions;
 
 internal class Program
 {
@@ -124,18 +121,15 @@ internal class Program
         var tests = fitness.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
         var names = tests.Select(t => t.Name).ToList();
         console.WriteLine();
-        console.Color = ConsoleColor.White;
+        console.ResetColor();
         console.Write("The ");
-        console.Color = ConsoleColor.Yellow;
-        console.Write(fitness.Name);
-        console.Color = ConsoleColor.White;
+        PrintColored(console, fitness.Name, ConsoleColor.Yellow);
         console.WriteLine(" class tests:");
         foreach (var name in names)
         {
-            console.Color = ConsoleColor.White;
+            console.ResetColor();
             console.Write($"{ConsoleCalculator.PointerIndent}({names.IndexOf(name) + 1}) ");
-            console.Color = ConsoleColor.Blue;
-            console.WriteLine(name);
+            PrintColoredLine(console, name, ConsoleColor.Blue);
         }
         console.Color = ConsoleColor.White;
         string[] actions = tests
@@ -154,37 +148,36 @@ internal class Program
         var indent = "  ";
 
         console.Write($"{indent}Test name: ");
-        console.Color = ConsoleColor.Blue;
-        console.WriteLine(test.Name);
-        console.ResetColor();
+        PrintColoredLine(console, test.Name, ConsoleColor.Blue);
 
         var assertion = test.GetCustomAttribute<FactAttribute>().DisplayName;
         console.Write($"{indent}Assertion: ");
-        console.Background = ConsoleColor.DarkGray; console.Write(assertion);
-        console.ResetColor(); console.WriteLine(' ');
+        PrintLineOnBackground(console, assertion, ConsoleColor.DarkGray);
 
         var parts = assertion.Split("should return");
         var expected = parts[1].Trim(new char[] { ' ', '\'' });
         console.Write($"{indent}Expected value: ");
-        console.Background = ConsoleColor.DarkGray; console.Write(expected);
-        console.ResetColor(); console.WriteLine(' ');
+        PrintLineOnBackground(console, expected, ConsoleColor.DarkGray);
 
-        var operation = parts[0].Trim(); // C# code
-        console.Write($"{indent}Operation C# : ");
-        console.Background = ConsoleColor.DarkBlue; console.Write(operation);
-        console.ResetColor(); console.WriteLine(' ');
+        var expression = parts[0].Trim(); // C# code
+        console.Write($"{indent}C# expression: ");
+        PrintLineOnBackground(console, expression, ConsoleColor.DarkBlue);
 
         console.WriteLine();
         console.Write($"{indent}Running unit test... ");
-        var instance = Activator.CreateInstance(fitness);
-        var success = true;
-        string status = null;
-        try { test.Invoke(instance, new object[0]); }
-        catch (Exception e) { success = false; status = e.Message; }
-        PrintSuccess(console, success);
+        try
+        {
+            var instance = Activator.CreateInstance(fitness);
+            test.Invoke(instance, new object[0]);
+            PrintSuccess(console, true);
+        }
+        catch (Exception e)
+        {
+            PrintSuccess(console, false, e.Message);
+        }
 
         string baseDir = Path.Combine(basePath, "Roslyn");
-        console.WriteLine($"{indent}Compiling C# operation... ");
+        console.WriteLine($"{indent}Compiling C# expression... ");
 
         var calcAsm = typeof(IBinaryOperation).Assembly;
         var assemblies = new List<Assembly>();
@@ -193,9 +186,55 @@ internal class Program
         string[] references = assemblies.Select(a => a.Location).Distinct().ToArray();
         var csFile = Path.Combine(baseDir, "OperationSample.csharp");
         string csharpFormat = File.ReadAllText(csFile);
-        string csharp = csharpFormat.Replace("{0}", operation);
-        var toFile = Path.Combine(baseDir, "OperationSample.dll");
+        string csharp = csharpFormat.Replace("{0}", expression);
+        var toFile = Path.Combine(baseDir, $"OperationSample_{test.Name}.dll");
         string path = calculator.Compile(csharp, toFile, references, indent + indent);
+        if (string.IsNullOrEmpty(path))
+        {
+            PrintSuccess(console, false, indent: indent);
+            return;
+        }
+
+        console.Write($"{indent}Reflecting from {Path.GetFileName(path)}... ");
+        var operationAsm = Assembly.LoadFrom(path);
+        var type = operationAsm.GetType("Roslyn.OperationSample");
+        var run = type.GetMethod("Run");
+        console.WriteLine("Done");
+
+        console.Write($"{indent}Evaluating the expression... ");
+        var start = console.GetCursor();
+        EnsureScrolling(console, ref start.Top); console.WriteLine();
+        console.Write($"{indent+ indent}Expression: ");
+        EnsureScrolling(console, ref start.Top);
+        PrintLineOnBackground(console, expression, ConsoleColor.DarkBlue);
+        console.Write($"{indent + indent}Getting value... ");
+        string evalValue = string.Empty;
+        try
+        {
+            evalValue = run.Invoke(null, new object[0]).ToString();
+            EnsureScrolling(console, ref start.Top);
+            PrintLineOnBackground(console, evalValue, ConsoleColor.DarkBlue);
+            var current = console.GetCursor();
+            console.SetCursor(start.Left, start.Top);
+            console.Write("Done");
+            console.SetCursor(current.Left, current.Top);
+        }
+        catch (Exception e)
+        {
+            PrintSuccess(console, false, e.Message);
+        }
+
+        console.WriteLine($"{indent}Final asserting... ");
+        console.Write($"{indent + indent}Expected: ");
+        PrintLineOnBackground(console, expected, ConsoleColor.DarkGray);
+        console.Write($"{indent + indent}  Actual: ");
+        PrintLineOnBackground(console, evalValue, ConsoleColor.DarkBlue);
+        console.Write($"{indent + indent}Assertion: ");
+        bool assert = expected.Equals( evalValue );
+        PrintSuccess(console, assert, assert.ToString());
+
+        console.Write($"Test #{action + 1}... ");
+        PrintSuccess(console, assert, assert ? "Passed" : "Failed");
     }
 
     private static void AddReferencedAssemblies(Assembly master, List<Assembly> list)
@@ -230,7 +269,6 @@ internal class Program
         foreach (AssemblyName asm in systemRefs)
             assemblies.Add(Assembly.Load(asm.FullName));
         references = assemblies.Select(a => a.Location).ToArray();
-        //references = new string[] { Path.Combine(baseDir, "Test1.dll") };
         path = calculator.CompileFile(baseDir, typeName + ".csharp", references, indent);
         PrintTest(console, typeName, testName, path, indent);
     }
@@ -292,5 +330,37 @@ internal class Program
         console.Color = ConsoleColor.White;
         if (nline)
             console.WriteLine();
+    }
+
+    private static void PrintColored(IConsoleService console, string text, ConsoleColor color, string indent = null)
+    {
+        console.Color = color;
+        console.Write(indent + text);
+        console.ResetColor();
+    }
+    private static void PrintColoredLine(IConsoleService console, string text, ConsoleColor color, string indent = null)
+    {
+        PrintColored(console, text, color, indent);
+        console.WriteLine();
+    }
+
+    private static void PrintOnBackground(IConsoleService console, string text, ConsoleColor color, string indent = null)
+    {
+        console.Background = color;
+        console.Write(indent + text);
+        var pos = console.GetCursor();
+        console.ResetColor();
+        console.Write(' ');
+        console.SetCursor(pos.Left, pos.Top);
+    }
+    private static void PrintLineOnBackground(IConsoleService console, string text, ConsoleColor color, string indent = null)
+    {
+        PrintOnBackground(console, text, color, indent);
+        console.WriteLine();
+    }
+    private static void EnsureScrolling(IConsoleService console, ref int top)
+    {
+        if (console.CursorTop >= console.BufferHeight - 1)
+            top--;
     }
 }

@@ -235,7 +235,7 @@ namespace RamanM.Properti.Calculator.Console
 
             if (results.Errors.Count == 0)
             {
-                console.WriteLine(indent + "The C# code compiled to: " + (results.PathToAssembly ?? toFile));
+                console.WriteLine(indent + "Compiled to: " + (results.PathToAssembly ?? toFile));
                 console.Color = ConsoleColor.Green;
                 console.WriteLine(indent + "Successful");
                 console.Color = ConsoleColor.White;
