@@ -61,6 +61,8 @@ namespace RamanM.Properti.Calculator.Implementations
         public T ToResult() => ToResult(ref value);
 
         object IResultant.ToResult() => ToResult();
+
+        public override string ToString() => ToResult().ToString();
     }
 
     public abstract class BinaryOperation<TOut, TIn> : BinaryOperationBase<TIn, TOut>, IBinaryOperation<TOut, TIn>
@@ -123,6 +125,8 @@ namespace RamanM.Properti.Calculator.Implementations
         public object ToResult() => ToResult(ref value);
 
         TOut IResultant<TOut>.ToResult() => ToResult(ref value);
+
+        public override string ToString() => ToResult().ToString();
     }
 
     public abstract class BinaryOperationBase<TIn, TOut>

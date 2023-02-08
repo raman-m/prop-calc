@@ -97,5 +97,7 @@ namespace RamanM.Properti.Calculator.Implementations
         public abstract T Apply(T operand);
 
         object IResultant.ToResult() => ToResult();
+
+        public override string ToString() => ToResult().ToString();
     }
 }
