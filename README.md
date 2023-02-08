@@ -28,5 +28,5 @@ dotnet test -l "console;verbosity=normal" --filter FullyQualifiedName~Fitness
 ### Running
 The console app should be run by this command:
 ```pwsh
-dotnet run --project "console\Properti.Calculator.Console.csproj"
+dotnet run --project "console\Properti.Calculator.Console.csproj" --framework net7.0
 ```
