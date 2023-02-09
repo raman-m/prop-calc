@@ -1,8 +1,8 @@
 # Properti Calculator
 
 ## Installation
-+ [.NET 7 SDK](https://dotnet.microsoft.com/download)
-+ *[Visual Studio IDE](https://visualstudio.microsoft.com/downloads/)
++ [.NET 7 SDK](https://dotnet.microsoft.com/download), Required
++ *[Visual Studio IDE](https://visualstudio.microsoft.com/downloads/), Optional
 
 ## Scripts
 ### Building
