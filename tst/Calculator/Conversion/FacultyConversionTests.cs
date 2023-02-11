@@ -32,7 +32,7 @@ namespace RamanM.Properti.Calculator.Tests.Conversion
         public void Faculty_InterfaceParamCstr_ReturnsFacultyObject()
         {
             // Arrange
-            IOperation<long> param = new Constant<long>(2);
+            /*IOperation<long>*/ var param = new Constant<long>(2);
 
             // Act
             var sut = new Faculty(param);

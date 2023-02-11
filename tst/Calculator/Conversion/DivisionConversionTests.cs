@@ -35,8 +35,8 @@ namespace RamanM.Properti.Calculator.Tests.Conversion
         public void Division_FullInterfaceParamsCstr_ReturnsDivisionObject()
         {
             // Arrange
-            IOperation<double> param1 = new Division(3, 1);
-            IOperation<double> param2 = new Division(2, 1);
+            /*IOperation<double>*/ var param1 = new Division(3, 1);
+            /*IOperation<double>*/ var param2 = new Division(2, 1);
 
             // Act
             var sut = new Division(param1, param2);

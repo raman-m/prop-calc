@@ -40,7 +40,7 @@ namespace RamanM.Properti.Calculator.Tests
             // Arrange
             double left = 30D, right = 5D;
             var sut = new Division(left, right);
-            sut.Parent = new Constant(0);
+            sut.Parent = new Constant<double>(sut);
             string expected = $"({left} / {right})";
 
             // Act
@@ -71,7 +71,7 @@ namespace RamanM.Properti.Calculator.Tests
             // Arrange
             double left = 30D, right = 5D;
             var sut = new Division(left, right);
-            sut.Parent = new Constant(0);
+            sut.Parent = new Constant<double>(sut);
             string expected = $"{nameof(Division).ToLower()} of {left} by {right}";
 
             // Act

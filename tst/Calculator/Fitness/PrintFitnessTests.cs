@@ -26,7 +26,7 @@ namespace RamanM.Properti.Calculator.Tests.Fitness
         public void Division_Print_ExampleWithSum_PrintsFinalEquality()
         {
             // Arrange
-            var sut = new Division(30, new Sum(2, 3));
+            var sut = new Division(30D, new Sum(2, 3));
             string expected = "(30 / (2 + 3)) = 6";
 
             // Act

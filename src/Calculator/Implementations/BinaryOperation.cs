@@ -63,6 +63,8 @@ namespace RamanM.Properti.Calculator.Implementations
         object IResultant.ToResult() => ToResult();
 
         public override string ToString() => ToResult().ToString();
+
+        //public static implicit operator T(BinaryOperation<T> operation) => operation.value;
     }
 
     public abstract class BinaryOperation<TOut, TIn> : BinaryOperationBase<TIn, TOut>, IBinaryOperation<TOut, TIn>
@@ -84,33 +86,33 @@ namespace RamanM.Properti.Calculator.Implementations
             Right = new Constant<TIn>(right, this);
         }
 
-        public BinaryOperation(IOperation left, IOperation right)
-            : this()
-        {
-            Left = left;
-            Right = right;
-            left.Parent = right.Parent = this;
-        }
+        //public BinaryOperation(IOperation left, IOperation right)
+        //    : this()
+        //{
+        //    Left = left;
+        //    Right = right;
+        //    left.Parent = right.Parent = this;
+        //}
 
-        public BinaryOperation(IOperation left, TIn right)
-            : this()
-        {
-            Left = left;
-            Left.Parent = this;
-            Right = new Constant<TIn>(right, this);
-        }
+        //public BinaryOperation(IOperation left, TIn right)
+        //    : this()
+        //{
+        //    Left = left;
+        //    Left.Parent = this;
+        //    Right = new Constant<TIn>(right, this);
+        //}
 
-        public BinaryOperation(TIn left, IOperation right)
-            : this()
-        {
-            Left = new Constant<TIn>(left, this);
-            Right = right;
-            Right.Parent = this;
-        }
+        //public BinaryOperation(TIn left, IOperation right)
+        //    : this()
+        //{
+        //    Left = new Constant<TIn>(left, this);
+        //    Right = right;
+        //    Right.Parent = this;
+        //}
 
-        public BinaryOperation(IOperation<TIn> left, IOperation<TIn> right)
-            : this((IOperation)left, right)
-        { }
+        //public BinaryOperation(IOperation<TIn> left, IOperation<TIn> right)
+        //    : this((IOperation)left, right)
+        //{ }
 
         protected TOut? value;
 

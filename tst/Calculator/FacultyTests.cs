@@ -41,7 +41,7 @@ namespace RamanM.Properti.Calculator.Tests
         {
             int operand = 4;
             var sut = new Faculty(operand);
-            sut.Parent = new Constant(0);
+            sut.Parent = new Constant<long>(sut);
             string expected = $"({operand}!)";
 
             // Act
@@ -74,7 +74,7 @@ namespace RamanM.Properti.Calculator.Tests
             // Arrange
             int operand = 4;
             var sut = new Faculty(operand);
-            sut.Parent = new Constant(0);
+            sut.Parent = new Constant<long>(sut);
 
             string expected = $"{nameof(Faculty).ToLower()} of {operand}";
 
