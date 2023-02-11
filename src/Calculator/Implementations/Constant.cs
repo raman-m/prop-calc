@@ -3,32 +3,35 @@ using System;
 
 namespace RamanM.Properti.Calculator.Implementations
 {
-    public class Constant : IOperation
-    {
-        private readonly object value;
+    //public class Constant : IOperation
+    //{
+    //    private readonly object value;
 
-        private Constant() { }
+    //    private Constant() { }
 
-        public Constant(object value)
-        {
-            this.value = value;
-            Parent = null;
-        }
+    //    public Constant(object value)
+    //    {
+    //        this.value = value;
+    //        Parent = null;
+    //    }
 
-        public Constant(object value, IOperation parent)
-        {
-            this.value = value;
-            Parent = parent;
-        }
+    //    public Constant(object value, IOperation parent)
+    //    {
+    //        this.value = value;
+    //        Parent = parent;
+    //    }
 
-        public IOperation Parent { get; set; }
+    //    public IOperation Parent { get; set; }
 
-        public string Print() => value.ToString();
+    //    public string Print() => value.ToString();
 
-        public string PrintSentence() => value.ToString();
+    //    public string PrintSentence() => value.ToString();
 
-        public object ToResult() => value;
-    }
+    //    public object ToResult() => value;
+
+    //    public static implicit operator Constant(double constant)
+    //        => new Constant(constant);
+    //}
 
     public class Constant<T> : IOperation<T>
         where T : struct
@@ -37,24 +40,24 @@ namespace RamanM.Properti.Calculator.Implementations
 
         private Constant() { }
 
-        public Constant(object value)
-        {
-            object v = Convert.ChangeType(value, typeof(T));
-            this.value = (T)v;
-            Parent = null;
-        }
+        //public Constant(object value)
+        //{
+        //    object v = Convert.ChangeType(value, typeof(T));
+        //    this.value = (T)v;
+        //    Parent = null;
+        //}
 
-        public Constant(object value, IOperation parent)
-            : this(value)
-        {
-            Parent = parent;
-        }
+        //public Constant(object value, IOperation parent)
+        //    : this(value)
+        //{
+        //    Parent = parent;
+        //}
 
-        public Constant(object value, IOperation<T> parent)
-            : this(value)
-        {
-            Parent = (IOperation)parent;
-        }
+        //public Constant(object value, IOperation<T> parent)
+        //    : this(value)
+        //{
+        //    Parent = (IOperation)parent;
+        //}
 
         public Constant(T value)
         {
@@ -68,11 +71,11 @@ namespace RamanM.Properti.Calculator.Implementations
             Parent = parent;
         }
 
-        public Constant(T value, IOperation<T> parent)
-        {
-            this.value = value;
-            Parent = (IOperation)parent;
-        }
+        //public Constant(T value, IOperation<T> parent)
+        //{
+        //    this.value = value;
+        //    Parent = (IOperation)parent;
+        //}
 
         public IOperation Parent { get; set; }
 
@@ -83,5 +86,8 @@ namespace RamanM.Properti.Calculator.Implementations
         public T ToResult() => value;
 
         object IResultant.ToResult() => ToResult();
+
+        public static implicit operator T(Constant<T> operation) => operation.value;
+        public static implicit operator Constant<T>(T constant) => new(constant);
     }
 }
