@@ -40,7 +40,7 @@ namespace RamanM.Properti.Calculator.Tests
             // Arrange
             double left = 5.5D, right = 1.3D;
             var sut = new Subtraction(left, right);
-            sut.Parent = new Constant(0);
+            sut.Parent = new Constant<double>(sut);
             string expected = $"({left} - {right})";
 
             // Act
@@ -71,7 +71,7 @@ namespace RamanM.Properti.Calculator.Tests
             // Arrange
             double left = 5.5D, right = 1.3D;
             var sut = new Subtraction(left, right);
-            sut.Parent = new Constant(0);
+            sut.Parent = new Constant<double>(sut);
             string expected = $"{nameof(Subtraction).ToLower()} of {left} and {right}";
 
             // Act

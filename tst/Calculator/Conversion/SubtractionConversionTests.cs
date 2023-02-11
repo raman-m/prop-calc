@@ -35,8 +35,8 @@ namespace RamanM.Properti.Calculator.Tests.Conversion
         public void Subtraction_FullInterfaceParamsCstr_ReturnsSubtractionObject()
         {
             // Arrange
-            IOperation<double> param1 = new Subtraction(5, 2);
-            IOperation<double> param2 = new Subtraction(5, 4);
+            /*IOperation<double>*/ var param1 = new Subtraction(5, 2);
+            /*IOperation<double>*/ var param2 = new Subtraction(5, 4);
 
             // Act
             var sut = new Subtraction(param1, param2);

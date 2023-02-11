@@ -21,7 +21,7 @@ namespace RamanM.Properti.Calculator.Tests.Conversion
         public void Sum_MixedDoubleParamsCstr_ReturnsSumObject()
         {
             // Arrange, Act
-            var sut = new Sum(2, new Constant<double>(1));
+            var sut = new Sum(2, new Constant<double>(1)); //new Constant<double>(1));
             var sut2 = new Sum(new Constant<double>(1), 7);
 
             // Assert
@@ -35,8 +35,8 @@ namespace RamanM.Properti.Calculator.Tests.Conversion
         public void Sum_FullInterfaceParamsCstr_ReturnsSumObject()
         {
             // Arrange
-            IOperation<double> param1 = new Sum(2, 3);
-            IOperation<double> param2 = new Sum(4, 5);
+            /*IOperation<double>*/ var param1 = new Sum(2, 3);
+            /*IOperation<double>*/ var param2 = new Sum(4, 5);
 
             // Act
             var sut = new Sum(param1, param2);

@@ -35,8 +35,8 @@ namespace RamanM.Properti.Calculator.Tests.Conversion
         public void Multiplication_FullInterfaceParamsCstr_ReturnsMultiplicationObject()
         {
             // Arrange
-            IOperation<double> param1 = new Multiplication(2, 3);
-            IOperation<double> param2 = new Multiplication(2, 4);
+            /*IOperation<double>*/ var param1 = new Multiplication(2, 3);
+            /*IOperation<double>*/ var param2 = new Multiplication(2, 4);
 
             // Act
             var sut = new Multiplication(param1, param2);

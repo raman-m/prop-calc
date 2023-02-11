@@ -40,7 +40,7 @@ namespace RamanM.Properti.Calculator.Tests
             // Arrange
             double left = 5.2D, right = 1.5D;
             var sut = new Sum(left, right);
-            sut.Parent = new Constant(0);
+            //sut.Parent = new Constant(0);
             string expected = $"({left} + {right})";
 
             // Act
@@ -71,7 +71,7 @@ namespace RamanM.Properti.Calculator.Tests
             // Arrange
             double left = 5.2D, right = 1.5D;
             var sut = new Sum(left, right);
-            sut.Parent = new Constant(0);
+            //sut.Parent = new Constant(0);
             string expected = $"{nameof(Sum).ToLower()} of {left} and {right}";
 
             // Act

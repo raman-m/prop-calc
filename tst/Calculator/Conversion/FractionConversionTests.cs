@@ -35,8 +35,8 @@ namespace RamanM.Properti.Calculator.Tests.Conversion
         public void Fraction_FullInterfaceParamsCstr_ReturnsFractionObject()
         {
             // Arrange
-            IOperation<int> param1 = new Constant<int>(1);
-            IOperation<int> param2 = new Constant<int>(2);
+            /*IOperation<int>*/ var param1 = new Constant<int>(1);
+            /*IOperation<int>*/ var param2 = new Constant<int>(2);
 
             // Act
             var sut = new Fraction(param1, param2);
