@@ -5,11 +5,10 @@ namespace RamanM.Properti.Calculator.Implementations
 {
     public class Multiplication : BinaryOperation<double> //, IResultant<int>, IResultant<long>
     {
-        private Multiplication()
-            : base() { }
+        private Multiplication() { }
 
-        public Multiplication(double left, double right)
-            : base(left, right) { }
+        //public Multiplication(double left, double right)
+        //    : base(left, right) { }
 
         //public Multiplication(IOperation left, double right)
         //    : base(left, right) { }
@@ -23,8 +22,9 @@ namespace RamanM.Properti.Calculator.Implementations
 
         //public Multiplication(IOperation left, IOperation right)
         //    : base(left, right) { }
-        //public Multiplication(IOperation<double> left, IOperation<double> right)
-        //    : base(left, right) { }
+
+        public Multiplication(Operation left, Operation right)
+            : base(left, right) { }
 
         protected override char Operator => '*';
 
@@ -33,15 +33,15 @@ namespace RamanM.Properti.Calculator.Implementations
 
         //int IResultant<int>.ToResult()
         //    => Convert.ToInt32(ToResult());
-        public static implicit operator int(Multiplication operation)
+        public static explicit operator int(Multiplication operation)
             => Convert.ToInt32(operation.ToResult());
 
         //long IResultant<long>.ToResult()
         //    => Convert.ToInt64(ToResult());
-        public static implicit operator long(Multiplication operation)
+        public static explicit operator long(Multiplication operation)
             => Convert.ToInt64(operation.ToResult());
 
-        public static implicit operator double(Multiplication operation)
-            => operation.ToResult();
+        //public static implicit operator double(Multiplication operation)
+        //    => operation.ToResult();
     }
 }

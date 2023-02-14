@@ -3,13 +3,12 @@ using System;
 
 namespace RamanM.Properti.Calculator.Implementations
 {
-    public class Fraction : BinaryOperation<double, int> //, IResultant<int>, IResultant<long>
+    public class Fraction : BinaryOperation<int, double> //, IResultant<int>, IResultant<long>
     {
-        private Fraction()
-            : base() { }
+        private Fraction() { }
 
-        public Fraction(int left, int right)
-            : base(left, right) { }
+        //public Fraction(int left, int right)
+        //    : base(left, right) { }
 
         //public Fraction(IOperation left, int right)
         //    : base(left, right) { }
@@ -23,8 +22,8 @@ namespace RamanM.Properti.Calculator.Implementations
 
         //public Fraction(IOperation left, IOperation right)
         //    : base(left, right) { }
-        //public Fraction(IOperation<int> left, IOperation<int> right)
-        //    : base(left, right) { }
+        public Fraction(Operation left, Operation right)
+            : base(left, right) { }
 
         protected override char Operator => '/';
 
@@ -39,15 +38,15 @@ namespace RamanM.Properti.Calculator.Implementations
 
         //int IResultant<int>.ToResult()
         //    => Convert.ToInt32(ToResult());
-        public static implicit operator int(Fraction operation)
+        public static explicit operator int(Fraction operation)
             => Convert.ToInt32(operation.ToResult());
 
         //long IResultant<long>.ToResult()
         //    => Convert.ToInt64(ToResult());
-        public static implicit operator long(Fraction operation)
+        public static explicit operator long(Fraction operation)
             => Convert.ToInt64(operation.ToResult());
 
-        public static implicit operator double(Fraction operation)
+        public static explicit operator double(Fraction operation)
             => (double)operation.ToResult();
         //public static implicit operator double(Fraction operation)
         //    => ((IResultant<double>)operation).ToResult();

@@ -5,11 +5,10 @@ namespace RamanM.Properti.Calculator.Implementations
 {
     public class Division : BinaryOperation<double> //, IResultant<int>, IResultant<long>
     {
-        private Division()
-            : base() { }
+        private Division() { }
 
-        public Division(double left, double right)
-            : base(left, right) { }
+        //public Division(double left, double right)
+        //    : base(left, right) { }
 
         //public Division(IOperation left, double right)
         //    : base(left, right) { }
@@ -23,8 +22,8 @@ namespace RamanM.Properti.Calculator.Implementations
 
         //public Division(IOperation left, IOperation right)
         //    : base(left, right) { }
-        //public Division(IOperation<double> left, IOperation<double> right)
-        //    : base(left, right) { }
+        public Division(Operation left, Operation right)
+            : base(left, right) { }
 
         protected override char Operator => '/';
 
@@ -36,15 +35,15 @@ namespace RamanM.Properti.Calculator.Implementations
 
         //int IResultant<int>.ToResult()
         //    => Convert.ToInt32(ToResult());
-        public static implicit operator int(Division operation)
+        public static explicit operator int(Division operation)
             => Convert.ToInt32(operation.ToResult());
 
         //long IResultant<long>.ToResult()
         //    => Convert.ToInt64(ToResult());
-        public static implicit operator long(Division operation)
+        public static explicit operator long(Division operation)
             => Convert.ToInt64(operation.ToResult());
 
-        public static implicit operator double(Division operation)
-            => operation.ToResult();
+        //public static implicit operator double(Division operation)
+        //    => operation.ToResult();
     }
 }

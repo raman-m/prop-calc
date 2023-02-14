@@ -14,32 +14,32 @@ namespace RamanM.Properti.Calculator.Tests.Conversion
 
             // Assert
             Assert.NotNull(sut);
-            Assert.Equal(24, sut.ToResult());
+            Assert.Equal(24L, sut.ToResult());
         }
 
         [Fact]
         public void Faculty_ConstantParamCstr_ReturnsFacultyObject()
         {
             // Arrange, Act
-            var sut = new Faculty(new Constant<long>(3));
+            var sut = new Faculty(new Operation<long>(3));
 
             // Assert
             Assert.NotNull(sut);
-            Assert.Equal(6, sut.ToResult());
+            Assert.Equal(6L, sut.ToResult());
         }
 
         [Fact]
         public void Faculty_InterfaceParamCstr_ReturnsFacultyObject()
         {
             // Arrange
-            /*IOperation<long>*/ var param = new Constant<long>(2);
+            /*IOperation<long>*/ var param = new Operation<long>(2);
 
             // Act
             var sut = new Faculty(param);
 
             // Assert
             Assert.NotNull(sut);
-            Assert.Equal(2, sut.ToResult());
+            Assert.Equal(2L, sut.ToResult());
         }
 
         [Fact]
@@ -50,7 +50,7 @@ namespace RamanM.Properti.Calculator.Tests.Conversion
 
             // Assert
             Assert.NotNull(sut);
-            Assert.Equal(120, sut.ToResult());
+            Assert.Equal(120L, sut.ToResult());
         }
 
         [Fact]
@@ -61,7 +61,7 @@ namespace RamanM.Properti.Calculator.Tests.Conversion
 
             // Assert
             Assert.NotNull(sut);
-            Assert.Equal(6, sut.ToResult());
+            Assert.Equal(6L, sut.ToResult());
         }
 
         [Fact]
@@ -72,7 +72,7 @@ namespace RamanM.Properti.Calculator.Tests.Conversion
 
             // Assert
             Assert.NotNull(sut);
-            Assert.Equal(120, sut.ToResult());
+            Assert.Equal(120L, sut.ToResult());
         }
 
         [Fact]
@@ -83,7 +83,7 @@ namespace RamanM.Properti.Calculator.Tests.Conversion
 
             // Assert
             Assert.NotNull(sut);
-            Assert.Equal(720, sut.ToResult());
+            Assert.Equal(720L, sut.ToResult());
         }
 
         [Fact]
@@ -94,7 +94,7 @@ namespace RamanM.Properti.Calculator.Tests.Conversion
 
             // Assert
             Assert.NotNull(sut);
-            Assert.Equal(120, sut.ToResult());
+            Assert.Equal(120L, sut.ToResult());
         }
 
         [Fact]
@@ -105,7 +105,7 @@ namespace RamanM.Properti.Calculator.Tests.Conversion
 
             // Assert
             Assert.NotNull(sut);
-            Assert.Equal(720, sut.ToResult());
+            Assert.Equal(720L, sut.ToResult());
         }
     }
 }

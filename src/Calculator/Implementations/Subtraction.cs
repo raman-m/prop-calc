@@ -8,11 +8,10 @@ namespace RamanM.Properti.Calculator.Implementations
     /// </summary>
     public class Subtraction : BinaryOperation<double> //, IResultant<int>, IResultant<long>
     {
-        private Subtraction()
-            : base() { }
+        private Subtraction() { }
 
-        public Subtraction(double left, double right)
-            : base(left, right) { }
+        //public Subtraction(double left, double right)
+        //    : base(left, right) { }
 
         //public Subtraction(IOperation left, double right)
         //   : base(left, right) { }
@@ -26,8 +25,8 @@ namespace RamanM.Properti.Calculator.Implementations
 
         //public Subtraction(IOperation left, IOperation right)
         //   : base(left, right) { }
-        //public Subtraction(IOperation<double> left, IOperation<double> right)
-        //   : base(left, right) { }
+        public Subtraction(Operation left, Operation right)
+           : base(left, right) { }
 
         protected override char Operator => '-';
 
@@ -36,15 +35,15 @@ namespace RamanM.Properti.Calculator.Implementations
 
         //int IResultant<int>.ToResult()
         //    => Convert.ToInt32(ToResult());
-        public static implicit operator int(Subtraction operation)
+        public static explicit operator int(Subtraction operation)
             => Convert.ToInt32(operation.ToResult());
 
         //long IResultant<long>.ToResult()
         //    => Convert.ToInt64(ToResult());
-        public static implicit operator long(Subtraction operation)
+        public static explicit operator long(Subtraction operation)
             => Convert.ToInt64(operation.ToResult());
 
-        public static implicit operator double(Subtraction operation)
-            => operation.ToResult();
+        //public static implicit operator double(Subtraction operation)
+        //    => operation.ToResult();
     }
 }

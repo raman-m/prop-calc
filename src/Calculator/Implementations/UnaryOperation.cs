@@ -1,17 +1,16 @@
 ﻿using RamanM.Properti.Calculator.Interfaces;
+using System;
 
 namespace RamanM.Properti.Calculator.Implementations
 {
-    public abstract class UnaryOperation<T> : IUnaryOperation<T>
+    public abstract class UnaryOperation<T> : Operation<T>, IUnaryOperation<T>
         where T : struct
     {
-        protected T? value;
+        //protected T? getter;
 
         protected UnaryOperation()
         {
-            value = null;
-            Operand = null;
-            Parent = null;
+            getter = new Lazy<object>(() => ToResult());
         }
 
         public UnaryOperation(T operand)
@@ -20,14 +19,14 @@ namespace RamanM.Properti.Calculator.Implementations
             Operand = new Constant<T>(operand, this);
         }
 
-        public UnaryOperation(IOperation<T> operation)
+        public UnaryOperation(Operation operation)
             : this()
         {
             Operand = operation;
             Operand.Parent = this;
         }
 
-        public UnaryOperation(IOperation operation)
+        public UnaryOperation(Operation<T> operation)
             : this()
         {
             Operand = operation;
@@ -36,16 +35,16 @@ namespace RamanM.Properti.Calculator.Implementations
 
         public IOperation Operand { get; private set; }
 
-        public IOperation Parent { get; set; }
+        //public IOperation Parent { get; set; }
 
-        public string Print()
+        public override string Print()
         {
             var operand = Operand.Print();
             var format = PrintFormat();
             if (Parent == null)
             {
                 format += " = {2}";
-                T val = value.HasValue ? value.Value : ToResult();
+                T val = /*getter.HasValue ? getter.Value :*/ (T)ToResult();
                 return string.Format(format, operand, Operator, val); // (x!) = y
             }
             return string.Format(format, operand, Operator); // (x!)
@@ -60,13 +59,13 @@ namespace RamanM.Properti.Calculator.Implementations
         /// <returns>A string of format.</returns>
         protected virtual string PrintFormat() => "({0}{1})"; // (x!)
 
-        public string PrintSentence()
+        public override string PrintSentence()
         {
             var operand = Operand.PrintSentence();
             var format = SentenceFormat();
             if (Parent == null)
             {
-                T val = value.HasValue ? value.Value : ToResult();
+                T val = /*getter.HasValue ? getter.Value :*/ (T)ToResult();
                 format += " is {1}";
                 return string.Format(format, operand, val);
             }
@@ -83,14 +82,17 @@ namespace RamanM.Properti.Calculator.Implementations
             return t.Name.ToLower() + " of {0}";
         }
 
-        public T ToResult()
+        public override object ToResult()
         {
-            if (!value.HasValue)
-            {
-                T result = ((IResultant<T>)Operand).ToResult();
-                value = Apply(result);
-            }
-            return value.Value;
+            //if (!getter.HasValue)
+            //{
+            //    T result = ((IResultant<T>)Operand).ToResult();
+            //    getter = Apply(result);
+            //}
+            //return getter.Value;
+            var v = Operand.ToResult();
+            T result = (T)Convert.ChangeType(v, typeof(T));  //((IResultant<T>)Operand).ToResult();
+            return Apply(result);
         }
 
         protected abstract char Operator { get; }
