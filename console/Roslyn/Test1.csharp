@@ -1,6 +1,4 @@
-﻿//using System;
-
-namespace RoslynTests
+﻿namespace RoslynTests
 {
     public class Test1
     {

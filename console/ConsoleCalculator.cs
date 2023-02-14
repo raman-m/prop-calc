@@ -49,13 +49,13 @@ namespace RamanM.Properti.Calculator.Console
             string space = anchor.Namespace;
             var operations = from t in anchor.Assembly.GetTypes()
                              where t.IsClass && t.Namespace == space
-                                 && !t.Name.Contains("Operation") && !t.Name.Contains("Constant")
+                                 && !t.Name.Contains("Operation") && !t.Name.Contains("Constant") && !t.Name.StartsWith("<>c__")
                              select t;
 
             console.WriteLine();
             console.Color = ConsoleColor.White;
             console.Write("Defined operations: ");
-            console.Color = ConsoleColor.Blue; //Magenta;
+            console.Color = ConsoleColor.Blue;
             operations.ToList().ForEach(t => console.Write(t.Name + ", "));
 
             var cursor = console.GetCursor();
