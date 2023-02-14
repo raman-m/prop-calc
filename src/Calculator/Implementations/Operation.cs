@@ -3,7 +3,7 @@ using System;
 
 namespace RamanM.Properti.Calculator.Implementations;
 
-public class Operation : /*IOperation<double>,*/ IOperation
+public class Operation : IOperation
 {
     protected Lazy<object> getter;
 
@@ -49,8 +49,6 @@ public class Operation : /*IOperation<double>,*/ IOperation
 
     public override string ToString() => ToResult().ToString();
 
-    //object ToResult() => getter.Value;
-
     public static implicit operator Operation(double constant) => new Constant<double>(constant);
     public static implicit operator Operation(int constant) => new Constant<int>(constant);
     public static implicit operator Operation(long constant) => new Constant<long>(constant);
@@ -59,8 +57,6 @@ public class Operation : /*IOperation<double>,*/ IOperation
 public class Operation<T> : Operation, IOperation<T>, IOperation
     where T : struct
 {
-    //protected Lazy<T> getter;
-
     protected Operation() { }
 
     public Operation(double value)
@@ -102,8 +98,4 @@ public class Operation<T> : Operation, IOperation<T>, IOperation
     {
         return (T)ToResult();
     }
-
-    //public static implicit operator Operation<T>(double constant) => new(constant);
-    //public static implicit operator Operation<T>(int constant) => new(Convert.ToDouble(constant));
-    //public static implicit operator Operation<T>(long constant) => new(Convert.ToDouble(constant));
 }
