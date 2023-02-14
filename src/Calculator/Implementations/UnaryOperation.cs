@@ -6,8 +6,6 @@ namespace RamanM.Properti.Calculator.Implementations
     public abstract class UnaryOperation<T> : Operation<T>, IUnaryOperation<T>
         where T : struct
     {
-        //protected T? getter;
-
         protected UnaryOperation()
         {
             getter = new Lazy<object>(() => ToResult());
@@ -35,8 +33,6 @@ namespace RamanM.Properti.Calculator.Implementations
 
         public IOperation Operand { get; private set; }
 
-        //public IOperation Parent { get; set; }
-
         public override string Print()
         {
             var operand = Operand.Print();
@@ -44,7 +40,7 @@ namespace RamanM.Properti.Calculator.Implementations
             if (Parent == null)
             {
                 format += " = {2}";
-                T val = /*getter.HasValue ? getter.Value :*/ (T)ToResult();
+                T val = (T)ToResult();
                 return string.Format(format, operand, Operator, val); // (x!) = y
             }
             return string.Format(format, operand, Operator); // (x!)
@@ -65,7 +61,7 @@ namespace RamanM.Properti.Calculator.Implementations
             var format = SentenceFormat();
             if (Parent == null)
             {
-                T val = /*getter.HasValue ? getter.Value :*/ (T)ToResult();
+                T val = (T)ToResult();
                 format += " is {1}";
                 return string.Format(format, operand, val);
             }
@@ -84,14 +80,8 @@ namespace RamanM.Properti.Calculator.Implementations
 
         public override object ToResult()
         {
-            //if (!getter.HasValue)
-            //{
-            //    T result = ((IResultant<T>)Operand).ToResult();
-            //    getter = Apply(result);
-            //}
-            //return getter.Value;
             var v = Operand.ToResult();
-            T result = (T)Convert.ChangeType(v, typeof(T));  //((IResultant<T>)Operand).ToResult();
+            T result = (T)Convert.ChangeType(v, typeof(T));
             return Apply(result);
         }
 

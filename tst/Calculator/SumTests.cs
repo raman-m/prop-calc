@@ -40,7 +40,7 @@ namespace RamanM.Properti.Calculator.Tests
             // Arrange
             double left = 5.2D, right = 1.5D;
             var sut = new Sum(left, right);
-            sut.Parent = new Operation(() => sut.ToResult()); //Constant<double>(sut);
+            sut.Parent = new Operation(() => sut.ToResult());
             string expected = $"({left} + {right})";
 
             // Act
