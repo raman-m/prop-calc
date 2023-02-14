@@ -41,7 +41,7 @@ namespace RamanM.Properti.Calculator.Tests
             // Arrange
             int left = 2, right = 3;
             var sut = new Fraction(left, right);
-            sut.Parent = new Constant<double>(sut);
+            sut.Parent = new Operation(() => sut.ToResult());
             string expected = $"({left}/{right})";
 
             // Act
@@ -73,7 +73,7 @@ namespace RamanM.Properti.Calculator.Tests
             // Arrange
             int left = 2, right = 3;
             var sut = new Fraction(left, right);
-            sut.Parent = new Constant<double>(sut);
+            sut.Parent = new Operation(() => sut.ToResult());
             string expected = $"{left}/{right}";
 
             // Act

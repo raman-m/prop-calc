@@ -9,11 +9,10 @@ namespace RamanM.Properti.Calculator.Implementations
     /// </summary>
     public class Sum : BinaryOperation<double> //,IResultant<int>, IResultant<long>
     {
-        private Sum()
-            : base() { }
+        private Sum() { }
 
-        public Sum(double left, double right)
-            : base(left, right) { }
+        //public Sum(double left, double right)
+        //    : base(left, right) { }
 
         //public Sum(IOperation left, double right)
         //    : base(left, right) { }
@@ -27,8 +26,16 @@ namespace RamanM.Properti.Calculator.Implementations
 
         //public Sum(IOperation left, IOperation right)
         //    : base(left, right) { }
-        //public Sum(IOperation<double> left, IOperation<double> right)
-        //    : base(left, right) { }
+
+        //public Sum(Constant<double> left, Constant<double> right)
+        //{
+        //    Left = left;
+        //    Right = right;
+        //    Parent = null;
+        //}
+
+        public Sum(Operation left, Operation right)
+            : base(left, right) { }
 
         protected override char Operator => '+';
 
@@ -37,15 +44,15 @@ namespace RamanM.Properti.Calculator.Implementations
 
         //int IResultant<int>.ToResult()
         //    => Convert.ToInt32(ToResult());
-        public static implicit operator int(Sum operation)
+        public static explicit operator int(Sum operation)
             => Convert.ToInt32(operation.ToResult());
 
         //long IResultant<long>.ToResult()
         //    => Convert.ToInt64(ToResult());
-        public static implicit operator long(Sum operation)
+        public static explicit operator long(Sum operation)
             => Convert.ToInt64(operation.ToResult());
 
-        public static implicit operator double(Sum operation)
-            => operation.ToResult();
+        //public static implicit operator double(Sum operation)
+        //    => operation.ToResult();
     }
 }

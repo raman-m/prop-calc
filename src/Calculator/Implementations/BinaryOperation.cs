@@ -1,26 +1,76 @@
 ﻿using RamanM.Properti.Calculator.Interfaces;
+using System;
 
 namespace RamanM.Properti.Calculator.Implementations
 {
-    public abstract class BinaryOperation<T> : BinaryOperationBase<T, T>, IBinaryOperation<T>
+    public abstract class BinaryOperation<T> : BinaryOperation<T, T>, IBinaryOperation<T>
         where T : struct
     {
         protected BinaryOperation()
-        {
-            value = null;
-            Left = null;
-            Right = null;
-            Parent = null;
-        }
+            : base() { }
 
+        //public BinaryOperation(T left, T right)
+        //    : this()
+        //{
+        //    Left = new Constant<T>(left, this);
+        //    Right = new Constant<T>(right, this);
+        //}
+
+        //public BinaryOperation(IOperation left, IOperation right)
+        //    : this()
+        //{
+        //    Left = left;
+        //    Right = right;
+        //    left.Parent = right.Parent = this;
+        //}
+
+        //public BinaryOperation(IOperation left, T right)
+        //    : this()
+        //{
+        //    Left = left;
+        //    Left.Parent = this;
+        //    Right = new Constant<T>(right, this);
+        //}
+
+        //public BinaryOperation(T left, IOperation right)
+        //    : this()
+        //{
+        //    Left = new Constant<T>(left, this);
+        //    Right = right;
+        //    Right.Parent = this;
+        //}
+
+        //public BinaryOperation(IOperation<T> left, IOperation<T> right)
+        //    : this((IOperation)left, right)
+        //{ }
         public BinaryOperation(T left, T right)
             : this()
         {
-            Left = new Constant<T>(left, this);
-            Right = new Constant<T>(right, this);
+            Left = new Operation<T>(left, this);
+            Right = new Operation<T>(right, this);
         }
 
-        public BinaryOperation(IOperation left, IOperation right)
+        //public UnaryOperation(Operation operation)
+        //    : this()
+        //{
+        //    Operand = operation;
+        //    Operand.Parent = this;
+        //}
+        //public BinaryOperation(Operation left, Operation right)
+        //    : this()
+        //{
+        //    Left = left;
+        //    Right = right;
+        //    left.Parent = right.Parent = this;
+        //}
+
+        //public UnaryOperation(Operation<T> operation)
+        //    : this()
+        //{
+        //    Operand = operation;
+        //    Operand.Parent = this;
+        //}
+        public BinaryOperation(Operation left, Operation right)
             : this()
         {
             Left = left;
@@ -28,54 +78,100 @@ namespace RamanM.Properti.Calculator.Implementations
             left.Parent = right.Parent = this;
         }
 
-        public BinaryOperation(IOperation left, T right)
-            : this()
-        {
-            Left = left;
-            Left.Parent = this;
-            Right = new Constant<T>(right, this);
-        }
+        //public BinaryOperation(Operation<T> left, Operation<T> right)
+        //    : this()
+        //{
+        //    Left = left;
+        //    Right = right;
+        //    left.Parent = right.Parent = this;
+        //}
 
-        public BinaryOperation(T left, IOperation right)
-            : this()
-        {
-            Left = new Constant<T>(left, this);
-            Right = right;
-            Right.Parent = this;
-        }
 
-        public BinaryOperation(IOperation<T> left, IOperation<T> right)
-            : this((IOperation)left, right)
-        { }
+        //protected T? getter;
 
-        protected T? value;
+        //public override IOperation Left { get; protected set; }
+        //public override IOperation Right { get; protected set; }
+        //public override IOperation Parent { get; set; }
 
-        public override IOperation Left { get; protected set; }
-        public override IOperation Right { get; protected set; }
-        public override IOperation Parent { get; set; }
+        //public string Print() => Print(ref getter);
 
-        public string Print() => Print(ref value);
+        //public string PrintSentence() => PrintSentence(ref getter);
 
-        public string PrintSentence() => PrintSentence(ref value);
-
-        public T ToResult() => ToResult(ref value);
-
-        object IResultant.ToResult() => ToResult();
-
-        public override string ToString() => ToResult().ToString();
-
-        //public static implicit operator T(BinaryOperation<T> operation) => operation.value;
+        //public T ToResult() => ToResult(ref getter);
     }
 
-    public abstract class BinaryOperation<TOut, TIn> : BinaryOperationBase<TIn, TOut>, IBinaryOperation<TOut, TIn>
-        where TOut : struct
+    //public abstract class BinaryOperation<TOut, TIn> : BinaryOperationBase<TIn, TOut>, IBinaryOperation<TOut, TIn>
+    //    where TOut : struct
+    //    where TIn : struct
+    //{
+    //    protected BinaryOperation()
+    //    {
+    //        getter = null;
+    //        Left = null;
+    //        Right = null;
+    //        Parent = null;
+    //    }
+
+    //    public BinaryOperation(TIn left, TIn right)
+    //        : this()
+    //    {
+    //        Left = new Constant<TIn>(left, this);
+    //        Right = new Constant<TIn>(right, this);
+    //    }
+
+    //    //public BinaryOperation(IOperation left, IOperation right)
+    //    //    : this()
+    //    //{
+    //    //    Left = left;
+    //    //    Right = right;
+    //    //    left.Parent = right.Parent = this;
+    //    //}
+
+    //    //public BinaryOperation(IOperation left, TIn right)
+    //    //    : this()
+    //    //{
+    //    //    Left = left;
+    //    //    Left.Parent = this;
+    //    //    Right = new Constant<TIn>(right, this);
+    //    //}
+
+    //    //public BinaryOperation(TIn left, IOperation right)
+    //    //    : this()
+    //    //{
+    //    //    Left = new Constant<TIn>(left, this);
+    //    //    Right = right;
+    //    //    Right.Parent = this;
+    //    //}
+
+    //    //public BinaryOperation(IOperation<TIn> left, IOperation<TIn> right)
+    //    //    : this((IOperation)left, right)
+    //    //{ }
+
+    //    //protected TOut? getter;
+
+    //    public override IOperation Left { get; protected set; }
+    //    public override IOperation Right { get; protected set; }
+    //    public override IOperation Parent { get; set; }
+
+    //    public string Print() => Print(ref getter);
+
+    //    public string PrintSentence() => PrintSentence(ref getter);
+
+    //    public object ToResult() => ToResult(ref getter);
+
+    //    TOut IResultant<TOut>.ToResult() => ToResult(ref getter);
+
+    //    public override string ToString() => ToResult().ToString();
+    //}
+
+    public abstract class BinaryOperation<TIn, TOut> : Operation<TOut>, IBinaryOperation<TOut, TIn>
         where TIn : struct
+        where TOut : struct
     {
         protected BinaryOperation()
         {
-            value = null;
-            Left = null;
-            Right = null;
+            getter = new Lazy<object>(() => ToResult()); //new Lazy<TOut>(ToResult);
+            Left = Right = null;
             Parent = null;
         }
 
@@ -86,62 +182,21 @@ namespace RamanM.Properti.Calculator.Implementations
             Right = new Constant<TIn>(right, this);
         }
 
-        //public BinaryOperation(IOperation left, IOperation right)
-        //    : this()
-        //{
-        //    Left = left;
-        //    Right = right;
-        //    left.Parent = right.Parent = this;
-        //}
+        public BinaryOperation(Operation left, Operation right)
+            : this()
+        {
+            Left = left;
+            Right = right;
+            left.Parent = right.Parent = this;
+        }
 
-        //public BinaryOperation(IOperation left, TIn right)
-        //    : this()
-        //{
-        //    Left = left;
-        //    Left.Parent = this;
-        //    Right = new Constant<TIn>(right, this);
-        //}
+        public IOperation Left { get; protected set; }
+        public IOperation Right { get; protected set; }
 
-        //public BinaryOperation(TIn left, IOperation right)
-        //    : this()
-        //{
-        //    Left = new Constant<TIn>(left, this);
-        //    Right = right;
-        //    Right.Parent = this;
-        //}
-
-        //public BinaryOperation(IOperation<TIn> left, IOperation<TIn> right)
-        //    : this((IOperation)left, right)
-        //{ }
-
-        protected TOut? value;
-
-        public override IOperation Left { get; protected set; }
-        public override IOperation Right { get; protected set; }
-        public override IOperation Parent { get; set; }
-
-        public string Print() => Print(ref value);
-
-        public string PrintSentence() => PrintSentence(ref value);
-
-        public object ToResult() => ToResult(ref value);
-
-        TOut IResultant<TOut>.ToResult() => ToResult(ref value);
-
-        public override string ToString() => ToResult().ToString();
-    }
-
-    public abstract class BinaryOperationBase<TIn, TOut>
-        where TIn : struct
-        where TOut : struct
-    {
-        public abstract IOperation Left { get; protected set; }
-        public abstract IOperation Right { get; protected set; }
-        public abstract IOperation Parent { get; set; }
         protected abstract char Operator { get; }
         public abstract TOut Apply(TIn left, TIn right);
 
-        protected string Print(ref TOut? value)
+        public override string Print() //(ref TOut? getter)
         {
             var left = Left.Print();
             var right = Right.Print();
@@ -149,35 +204,44 @@ namespace RamanM.Properti.Calculator.Implementations
             if (Parent == null)
             {
                 format += " = {3}";
-                TOut val = value.HasValue ? value.Value : ToResult(ref value);
+                TOut val = Result(); //getter.HasValue ? getter.Value : ToResult(ref getter);
                 return string.Format(format, left, right, Operator, val); // (2 + 3) = 5
             }
             return string.Format(format, left, right, Operator); // (2 + 3)
         }
 
-        protected string PrintSentence(ref TOut? value)
+        public override string PrintSentence() //(ref TOut? getter)
         {
             var left = Left.PrintSentence();
             var right = Right.PrintSentence();
             var format = SentenceFormat();
             if (Parent == null)
             {
-                TOut val = value.HasValue ? value.Value : ToResult(ref value);
+                TOut val = Result(); //getter.HasValue ? getter.Value : ToResult(ref getter);
                 format += " is {2}";
                 return string.Format(format, left, right, val);
             }
             return string.Format(format, left, right);
         }
 
-        protected TOut ToResult(ref TOut? value)
+        public override /*TOut*/ object ToResult() //(ref TOut? getter)
         {
-            if (!value.HasValue)
-            {
-                TIn l = ((IResultant<TIn>)Left).ToResult();
-                TIn r = ((IResultant<TIn>)Right).ToResult();
-                value = Apply(l, r);
-            }
-            return value.Value;
+            //if (!getter.HasValue)
+            //{
+            TOut result = Result();
+            //getter = Apply(l, r);
+            //}
+            //return getter.Value;
+            return result;
+        }
+
+        private TOut Result()
+        {
+            var lv = Left.ToResult();
+            var rv = Right.ToResult();
+            TIn l = (TIn)Convert.ChangeType(lv, typeof(TIn)); //((IResultant<TIn>)Left).ToResult();
+            TIn r = (TIn)Convert.ChangeType(rv, typeof(TIn)); //((IResultant<TIn>)Right).ToResult();
+            return Apply(l, r);
         }
 
         /// <summary>
@@ -198,5 +262,10 @@ namespace RamanM.Properti.Calculator.Implementations
             var t = GetType();
             return t.Name.ToLower() + " of {0} and {1}";
         }
+
+        object IResultant.ToResult() => ToResult();
+
+        public override string ToString() => ToResult().ToString();
+
     }
 }

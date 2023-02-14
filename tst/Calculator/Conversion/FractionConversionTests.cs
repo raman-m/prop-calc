@@ -21,8 +21,8 @@ namespace RamanM.Properti.Calculator.Tests.Conversion
         public void Fraction_MixedDoubleParamsCstr_ReturnsFractionObject()
         {
             // Arrange, Act
-            var sut = new Fraction(1, new Constant<int>(2));
-            var sut2 = new Fraction(new Constant<int>(1), 4);
+            var sut = new Fraction(1, new Operation<int>(2));
+            var sut2 = new Fraction(new Operation<int>(1), 4);
 
             // Assert
             Assert.NotNull(sut);
@@ -35,8 +35,8 @@ namespace RamanM.Properti.Calculator.Tests.Conversion
         public void Fraction_FullInterfaceParamsCstr_ReturnsFractionObject()
         {
             // Arrange
-            /*IOperation<int>*/ var param1 = new Constant<int>(1);
-            /*IOperation<int>*/ var param2 = new Constant<int>(2);
+            /*IOperation<int>*/ var param1 = new Operation<int>(1);
+            /*IOperation<int>*/ var param2 = new Operation<int>(2);
 
             // Act
             var sut = new Fraction(param1, param2);
