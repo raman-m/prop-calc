@@ -89,7 +89,7 @@ internal class Program
         {
             console.SetCursor(start.Left, start.Top);
             EnsureScrolling(console, ref start.Top);
-            expression = ReadLine(console, expression); //console.ReadLine();
+            expression = ReadLine(console, expression);
             console.ResetColor();
         }
         return expression;
@@ -122,7 +122,6 @@ internal class Program
 
         var fitnessTypes = refAsm.GetTypes()
             .Where(t => t.Namespace?.Contains(".Fitness") ?? false)
-            //.Select(t => t.Name)
             .ToArray();
         string[] actions = fitnessTypes
             .Select(t => t.Name)
@@ -406,15 +405,13 @@ internal class Program
 
     public static string ReadLine(IConsoleService console, string defaultText, string caret = "> ")
     {
-        //console.WriteLine(); // make sure we're on a fresh line
         List<char> buffer = defaultText.ToCharArray().Take(console.WindowWidth - caret.Length - 1).ToList();
         console.Color = ConsoleColor.DarkBlue;
         console.Write(caret);
         console.Color = ConsoleColor.Blue;
         console.Write(new string(buffer.ToArray()));
-        //console.SetCursor(console.CursorLeft, console.CursorTop);
 
-        ConsoleKeyInfo info = new ConsoleKeyInfo('a', ConsoleKey.A, false, false, false); //console.ReadKey(true);
+        ConsoleKeyInfo info = new ConsoleKeyInfo('a', ConsoleKey.A, false, false, false);
         while (info.Key != ConsoleKey.Enter)
         {
             info = console.ReadKey(true);

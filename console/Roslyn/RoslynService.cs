@@ -60,8 +60,7 @@ namespace RamanM.Properti.Calculator.Console.Roslyn
         public CompilerResults CompileAssembly(CompilerParameters options, string[] sources, string[] references = null)
         {
             var defaultRefs = new[] {
-                typeof(object).Assembly.Location, // System.Runtime.dll, namespace System
-                //typeof(Enumerable).Assembly.Location // System.Linq.dll
+                typeof(object).Assembly.Location,
             };
             var refs = references ?? defaultRefs;
             foreach (string dllPath in refs)
