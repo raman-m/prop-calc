@@ -8,32 +8,22 @@ using System.Reflection;
 
 namespace RamanM.Properti.Calculator.Console;
 
-internal class ConsoleCalculator : Calculator
+internal class ConsoleCalculator(IConsoleService console) : Calculator(console)
 {
-    private readonly IConsoleService console;
-
-    public ConsoleCalculator(IConsoleService console)
-        : base(console)
-    {
-        this.console = console;
-    }
+    private readonly IConsoleService console = console;
 
     public void Welcome(Assembly app)
     {
-#if NET7_0
-        var version = ".NET 7";
-#elif NET6_0
-        var version = ".NET 6";
-#elif NET5_0
-        var version = ".NET 5";
+#if NET9_0_OR_GREATER
+        var version = ".NET 9";
 #else
-        var version = ".NET < 5";
+        var version = ".NET < 9";
 #endif
         console.Color = ConsoleColor.Gray;
         console.WriteLine(version);
 
-        var programName = app.GetName().Name.Replace(".", " ");
-        console.WriteLine(app.FullName);
+        var programName = app?.GetName()?.Name?.Replace(".", " ") ?? "?";
+        console.WriteLine(app?.FullName ?? "?");
 
         var anchor = typeof(Sum);
         console.Color = ConsoleColor.Green;
@@ -43,7 +33,7 @@ internal class ConsoleCalculator : Calculator
         console.Color = ConsoleColor.Yellow;
         console.WriteLine($"Welcome to {programName} app!");
 
-        string space = anchor.Namespace;
+        string space = anchor.Namespace!;
         var operations = from t in anchor.Assembly.GetTypes()
                          where t.IsClass && t.Namespace == space
                              && !t.Name.Contains("Operation") && !t.Name.Contains("Constant") && !t.Name.StartsWith("<>c__")
@@ -91,7 +81,7 @@ internal class ConsoleCalculator : Calculator
         return false;
     }
 
-    public bool AskYesNo(string asking = null)
+    public bool AskYesNo(string? asking = null)
     {
         var ask = asking ?? "Continue?";
         console.Write($"{ask} (Y/N)  ");
@@ -145,7 +135,7 @@ internal class ConsoleCalculator : Calculator
         PrintAction(pointTo, color, line);
     }
 
-    public int UserAction(string[] actions, int selected, string header = null)
+    public int UserAction(string[] actions, int selected, string? header = null)
     {
         console.CursorVisible = false;
         console.WriteLine();
@@ -228,7 +218,7 @@ internal class ConsoleCalculator : Calculator
         return Compile(csharp, toFile, refs, indent);
     }
 
-    public string Compile(string csharp, string toFile, string[] references = null, string indent = "")
+    public string Compile(string csharp, string toFile, string[]? references = null, string indent = "")
     {
 
         string[] referenceAssemblies = references ?? Array.Empty<string>();

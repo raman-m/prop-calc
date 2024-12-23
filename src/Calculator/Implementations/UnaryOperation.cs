@@ -7,7 +7,7 @@ public abstract class UnaryOperation<T> : Operation<T>, IUnaryOperation<T>
 {
     protected UnaryOperation()
     {
-        getter = new Lazy<object>(() => ToResult());
+        getter = new Lazy<object>(ToResult);
     }
 
     public UnaryOperation(T operand)
@@ -30,11 +30,11 @@ public abstract class UnaryOperation<T> : Operation<T>, IUnaryOperation<T>
         Operand.Parent = this;
     }
 
-    public IOperation Operand { get; private set; }
+    public IOperation? Operand { get; private set; }
 
     public override string Print()
     {
-        var operand = Operand.Print();
+        var operand = Operand?.Print() ?? string.Empty;
         var format = PrintFormat();
         if (Parent == null)
         {
@@ -56,7 +56,7 @@ public abstract class UnaryOperation<T> : Operation<T>, IUnaryOperation<T>
 
     public override string PrintSentence()
     {
-        var operand = Operand.PrintSentence();
+        var operand = Operand?.PrintSentence();
         var format = SentenceFormat();
         if (Parent == null)
         {
@@ -79,7 +79,7 @@ public abstract class UnaryOperation<T> : Operation<T>, IUnaryOperation<T>
 
     public override object ToResult()
     {
-        var v = Operand.ToResult();
+        var v = Operand?.ToResult() ?? string.Empty;
         T result = (T)Convert.ChangeType(v, typeof(T));
         return Apply(result);
     }
@@ -89,5 +89,5 @@ public abstract class UnaryOperation<T> : Operation<T>, IUnaryOperation<T>
 
     object IResultant.ToResult() => ToResult();
 
-    public override string ToString() => ToResult().ToString();
+    public override string ToString() => ToResult().ToString()!;
 }

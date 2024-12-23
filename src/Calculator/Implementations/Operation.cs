@@ -4,7 +4,7 @@ namespace RamanM.Properti.Calculator.Implementations;
 
 public class Operation : IOperation
 {
-    protected Lazy<object> getter;
+    protected Lazy<object>? getter;
 
     protected Operation() { }
 
@@ -12,7 +12,7 @@ public class Operation : IOperation
     {
         getter = new Lazy<object>(() => value);
     }
-    public Operation(double value, IOperation parent)
+    public Operation(double value, IOperation? parent)
         : this(value)
     {
         Parent = parent;
@@ -38,15 +38,15 @@ public class Operation : IOperation
         Parent = parent;
     }
 
-    public IOperation Parent { get; set; }
+    public IOperation? Parent { get; set; }
 
-    public virtual object ToResult() => getter.Value;
+    public virtual object ToResult() => getter?.Value ?? string.Empty;
 
     public virtual string Print() => ToString();
 
     public virtual string PrintSentence() => ToString();
 
-    public override string ToString() => ToResult().ToString();
+    public override string ToString() => ToResult()?.ToString() ?? string.Empty;
 
     public static implicit operator Operation(double constant) => new Constant<double>(constant);
     public static implicit operator Operation(int constant) => new Constant<int>(constant);

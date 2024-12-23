@@ -10,6 +10,7 @@ public class ConsoleService : IConsoleService
     public void ResetColor() => Cns.ResetColor();
 
 
+#pragma warning disable CA1416 // Validate platform compatibility
     public int BufferWidth { get => Cns.BufferWidth; set => Cns.BufferWidth = value; }
     public int BufferHeight { get => Cns.BufferHeight; set => Cns.BufferHeight = value; }
 
@@ -21,6 +22,7 @@ public class ConsoleService : IConsoleService
 
     public void Beep() => Cns.Beep();
     public void Beep(int frequency, int duration) => Cns.Beep(frequency, duration);
+#pragma warning restore CA1416 // Validate platform compatibility
 
     public void Clear() => Cns.Clear();
 
@@ -29,7 +31,7 @@ public class ConsoleService : IConsoleService
     public ConsoleKeyInfo ReadKey() => Cns.ReadKey();
     public ConsoleKeyInfo ReadKey(bool intercept) => Cns.ReadKey(true);
 
-    public string ReadLine() => Cns.ReadLine();
+    public string ReadLine() => Cns.ReadLine() ?? string.Empty;
 
     public void SetCursor(int left, int top) => Cns.SetCursorPosition(left, top);
 

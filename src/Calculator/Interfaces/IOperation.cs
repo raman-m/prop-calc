@@ -5,7 +5,7 @@
 /// </summary>
 public interface IOperation : IResultant, IPrintable
 {
-    IOperation Parent { get; set; }
+    IOperation? Parent { get; set; }
 }
 
 public interface IOperation<TResult> : IOperation, IResultant<TResult>, IPrintable

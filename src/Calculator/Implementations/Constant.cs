@@ -23,6 +23,6 @@ public class Constant<T> : Operation, IOperation<T>, IOperation, IResultant
     public override string Print() => ToString();
     public override string PrintSentence() => ToString();
     public override object ToResult() => value;
-    public override string ToString() => value.ToString();
+    public override string ToString() => value.ToString() ?? string.Empty;
     T IResultant<T>.ToResult() => value;
 }

@@ -30,8 +30,9 @@ public abstract class BinaryOperation<TIn, TOut> : Operation<TOut>, IBinaryOpera
 {
     protected BinaryOperation()
     {
-        getter = new Lazy<object>(() => ToResult());
-        Left = Right = null;
+        getter = new Lazy<object>(ToResult);
+        Left = null;
+        Right = null;
         Parent = null;
     }
 
@@ -50,16 +51,16 @@ public abstract class BinaryOperation<TIn, TOut> : Operation<TOut>, IBinaryOpera
         left.Parent = right.Parent = this;
     }
 
-    public IOperation Left { get; protected set; }
-    public IOperation Right { get; protected set; }
+    public IOperation? Left { get; protected set; }
+    public IOperation? Right { get; protected set; }
 
     protected abstract char Operator { get; }
     public abstract TOut Apply(TIn left, TIn right);
 
     public override string Print()
     {
-        var left = Left.Print();
-        var right = Right.Print();
+        var left = Left?.Print() ?? string.Empty;
+        var right = Right?.Print() ?? string.Empty;
         var format = PrintFormat();
         if (Parent == null)
         {
@@ -72,8 +73,8 @@ public abstract class BinaryOperation<TIn, TOut> : Operation<TOut>, IBinaryOpera
 
     public override string PrintSentence()
     {
-        var left = Left.PrintSentence();
-        var right = Right.PrintSentence();
+        var left = Left?.PrintSentence() ?? string.Empty;
+        var right = Right?.PrintSentence() ?? string.Empty;
         var format = SentenceFormat();
         if (Parent == null)
         {
@@ -92,8 +93,8 @@ public abstract class BinaryOperation<TIn, TOut> : Operation<TOut>, IBinaryOpera
 
     private TOut Result()
     {
-        var lv = Left.ToResult();
-        var rv = Right.ToResult();
+        var lv = Left?.ToResult() ?? string.Empty;
+        var rv = Right?.ToResult() ?? string.Empty;
         TIn l = (TIn)Convert.ChangeType(lv, typeof(TIn));
         TIn r = (TIn)Convert.ChangeType(rv, typeof(TIn));
         return Apply(l, r);
@@ -120,6 +121,6 @@ public abstract class BinaryOperation<TIn, TOut> : Operation<TOut>, IBinaryOpera
 
     object IResultant.ToResult() => ToResult();
 
-    public override string ToString() => ToResult().ToString();
+    public override string ToString() => ToResult().ToString() ?? string.Empty;
 
 }

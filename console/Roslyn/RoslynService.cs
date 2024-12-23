@@ -46,12 +46,12 @@ public class RoslynService : ICodeCompiler
         return CompileAssembly(options, sources);
     }
 
-    public CompilerResults CompileAssembly(CompilerParameters options, string source, string[] references = null)
+    public CompilerResults CompileAssembly(CompilerParameters options, string source, string[]? references = null)
     {
         return CompileAssembly(options, new[] { source }, references);
     }
 
-    public CompilerResults CompileAssembly(CompilerParameters options, string[] sources, string[] references = null)
+    public CompilerResults CompileAssembly(CompilerParameters options, string[] sources, string[]? references = null)
     {
         var defaultRefs = new[] {
             typeof(object).Assembly.Location,

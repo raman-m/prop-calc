@@ -6,7 +6,7 @@
 public interface IUnaryOperation<T> : IOperation<T>, IResultant<T>, IOperation, IResultant, IPrintable
     where T : struct
 {
-    IOperation Operand { get; }
+    IOperation? Operand { get; }
 
     T Apply(T operand);
 }

@@ -2,8 +2,8 @@
 
 public interface IBinaryOperation : IOperation, IResultant, IPrintable
 {
-    IOperation Left { get; }
-    IOperation Right { get; }
+    IOperation? Left { get; }
+    IOperation? Right { get; }
 }
 
 /// <summary>

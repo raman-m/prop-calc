@@ -86,7 +86,7 @@ internal class App
         return expression;
     }
 
-    internal static string EvaluateExpression(ConsoleCalculator calculator, IConsoleService console, string expression, string basePath, string indent = null)
+    internal static string EvaluateExpression(ConsoleCalculator calculator, IConsoleService console, string expression, string basePath, string? indent = null)
     {
         indent = indent ?? "  ";
         console.WriteLine();
@@ -102,7 +102,7 @@ internal class App
             return string.Empty;
 
         var evalValue = ReflectExpressionType(console, path, expression, indent);
-        return evalValue.ToString();
+        return evalValue.ToString() ?? string.Empty;
     }
 
     internal static void RunFitnessTests(ConsoleCalculator calculator, IConsoleService console, string basePath)
@@ -148,25 +148,25 @@ internal class App
             {
                 indent = ConsoleCalculator.PointerIndent,
                 index = Array.IndexOf(tests, m),
-                display = m.GetCustomAttribute<FactAttribute>().DisplayName
+                display = m?.GetCustomAttribute<FactAttribute>()?.DisplayName
             })
             .Select(a => $"{a.indent}({a.index + 1}) {a.display}")
             .ToArray();
         var action = calculator.UserAction(actions, 0, "Select the test to perform:");
-        var test = tests.Single(t => t.Name == names[action]);
+        var test = tests.SingleOrDefault(t => t.Name == names[action]);
         console.WriteLine();
         console.WriteLine($"Performing the test #{action + 1}...");
         var indent = "  ";
 
         console.Write($"{indent}Test name: ");
-        PrintColoredLine(console, test.Name, ConsoleColor.Blue);
+        PrintColoredLine(console, test?.Name ?? nameof(test), ConsoleColor.Blue);
 
-        var assertion = test.GetCustomAttribute<FactAttribute>().DisplayName;
+        var assertion = test?.GetCustomAttribute<FactAttribute>()?.DisplayName;
         console.Write($"{indent}Assertion: ");
-        PrintLineOnBackground(console, assertion, ConsoleColor.DarkGray);
+        PrintLineOnBackground(console, assertion ?? nameof(assertion), ConsoleColor.DarkGray);
 
-        var parts = assertion.Split("should return");
-        var expected = parts[1].Trim(new char[] { ' ', '\'' });
+        var parts = assertion?.Split("should return") ?? [string.Empty, string.Empty];
+        var expected = parts[1].Trim([' ', '\'']);
         console.Write($"{indent}Expected value: ");
         PrintLineOnBackground(console, expected, ConsoleColor.DarkGray);
 
@@ -179,7 +179,7 @@ internal class App
         try
         {
             var instance = Activator.CreateInstance(fitness);
-            test.Invoke(instance, new object[0]);
+            test?.Invoke(instance, new object[0]);
             PrintSuccess(console, true);
         }
         catch (Exception e)
@@ -191,13 +191,13 @@ internal class App
         if (string.IsNullOrEmpty(path))
             return;
 
-        var evalValue = ReflectExpressionType(console, path, expression, indent);
+        var evalValue = ReflectExpressionType(console, path, expression, indent) ?? string.Empty;
 
         console.WriteLine($"{indent}Final asserting... ");
         console.Write($"{indent + indent}Expected: ");
         PrintLineOnBackground(console, expected, ConsoleColor.DarkGray);
         console.Write($"{indent + indent}  Actual: ");
-        PrintLineOnBackground(console, evalValue.ToString(), ConsoleColor.DarkBlue);
+        PrintLineOnBackground(console, evalValue.ToString()!, ConsoleColor.DarkBlue);
         console.Write($"{indent + indent}Assertion: ");
         bool assert = expected.Equals(evalValue.ToString());
         PrintSuccess(console, assert, assert.ToString());
@@ -217,7 +217,7 @@ internal class App
         }
     }
 
-    internal static string CompileExpression(ConsoleCalculator calculator, IConsoleService console, string expression, string basePath, string indent = null)
+    internal static string CompileExpression(ConsoleCalculator calculator, IConsoleService console, string expression, string basePath, string indent)
     {
         string baseDir = Path.Combine(basePath, "Roslyn");
         console.WriteLine($"{indent}Compiling C# expression... ");
@@ -239,18 +239,15 @@ internal class App
         return path;
     }
 
-    internal static object ReflectExpressionType(IConsoleService console, string dllPath, string expression, string indent = null)
+    internal static object ReflectExpressionType(IConsoleService console, string dllPath, string expression, string indent)
     {
-        if (string.IsNullOrEmpty(dllPath))
-            return null;
-
-        if (!File.Exists(dllPath))
-            return null;
+        if (string.IsNullOrEmpty(dllPath) || !File.Exists(dllPath))
+            return string.Empty;
 
         console.Write($"{indent}Reflecting from {Path.GetFileName(dllPath)}... ");
         var operationAsm = Assembly.LoadFrom(dllPath);
         var type = operationAsm.GetType("Roslyn.OperationSample");
-        var run = type.GetMethod("Run");
+        var run = type?.GetMethod("Run");
         console.WriteLine("Done");
 
         console.Write($"{indent}Evaluating the expression... ");
@@ -263,9 +260,9 @@ internal class App
         object evalValue = string.Empty;
         try
         {
-            evalValue = run.Invoke(null, new object[0]);
+            evalValue = run?.Invoke(null, new object[0]) ?? string.Empty;
             EnsureScrolling(console, ref start.Top);
-            PrintLineOnBackground(console, evalValue.ToString(), ConsoleColor.DarkBlue);
+            PrintLineOnBackground(console, evalValue?.ToString() ?? string.Empty, ConsoleColor.DarkBlue);
             var current = console.GetCursor();
             console.SetCursor(start.Left, start.Top);
             console.Write("Done");
@@ -275,7 +272,7 @@ internal class App
         {
             PrintSuccess(console, false, e.Message);
         }
-        return evalValue;
+        return evalValue ?? string.Empty;
     }
 
     internal static void RunCompilationTests(ConsoleCalculator calculator, IConsoleService console, string currentDir)
@@ -329,8 +326,8 @@ internal class App
                 if (instance == null)
                     throw new Exception("No instance");
 
-                Type t = dll.GetType(fullName, true);
-                var len = t.GetMethod("Length").Invoke(instance, new object[] { "123" });
+                Type? t = dll.GetType(fullName, true);
+                var len = t?.GetMethod("Length")?.Invoke(instance, new object[] { "123" });
                 status = $"Type '{typeName}' loaded successfully.";
                 success = true;
             }
@@ -350,7 +347,7 @@ internal class App
         PrintSuccess(console, success);
     }
 
-    private static void PrintSuccess(IConsoleService console, bool success, string status = null, string indent = null, bool? newLine = null)
+    private static void PrintSuccess(IConsoleService console, bool success, string? status = null, string? indent = null, bool? newLine = null)
     {
         var statusName = status ?? (success ? "Success" : "Failed");
         var prefix = indent ?? string.Empty;
@@ -362,19 +359,19 @@ internal class App
             console.WriteLine();
     }
 
-    private static void PrintColored(IConsoleService console, string text, ConsoleColor color, string indent = null)
+    private static void PrintColored(IConsoleService console, string text, ConsoleColor color, string? indent = null)
     {
         console.Color = color;
         console.Write(indent + text);
         console.ResetColor();
     }
-    private static void PrintColoredLine(IConsoleService console, string text, ConsoleColor color, string indent = null)
+    private static void PrintColoredLine(IConsoleService console, string text, ConsoleColor color, string? indent = null)
     {
         PrintColored(console, text, color, indent);
         console.WriteLine();
     }
 
-    private static void PrintOnBackground(IConsoleService console, string text, ConsoleColor color, string indent = null)
+    private static void PrintOnBackground(IConsoleService console, string text, ConsoleColor color, string indent)
     {
         console.Background = color;
         console.Write(indent + text);
@@ -383,8 +380,9 @@ internal class App
         console.Write(' ');
         console.SetCursor(pos.Left, pos.Top);
     }
-    private static void PrintLineOnBackground(IConsoleService console, string text, ConsoleColor color, string indent = null)
+    private static void PrintLineOnBackground(IConsoleService console, string text, ConsoleColor color, string? indent = null)
     {
+        indent ??= "  ";
         PrintOnBackground(console, text, color, indent);
         console.WriteLine();
     }
