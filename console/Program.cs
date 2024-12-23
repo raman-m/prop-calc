@@ -5,52 +5,49 @@ using RamanM.Properti.Calculator.Tests;
 using System.Reflection;
 using Xunit;
 
-internal class Program
+var console = new ConsoleService();
+var calculator = new ConsoleCalculator(console);
+
+var asm = Assembly.GetExecutingAssembly();
+var currentDir = Path.GetDirectoryName(asm.Location) ?? ".";
+
+while (true)
 {
-    private static string[] userActions = new string[]
+    calculator.Welcome(asm);
+
+    var choice = calculator.UserAction(App.UserActions, 2);
+    switch (++choice)
+    {
+        case 1:
+            App.RunCompilationTests(calculator, console, currentDir);
+            break;
+        case 2:
+            App.RunFitnessTests(calculator, console, currentDir);
+            break;
+        case 3:
+            App.RunCustomTests(calculator, console, currentDir);
+            break;
+        case 4:
+            console.WriteLine("Skipped");
+            break;
+        default:
+            console.WriteLine($"Sorry, no action with code {choice} to perform!");
+            break;
+    }
+
+    bool quit = calculator.WaitUser();
+    if (quit) break;
+}
+
+internal class App
+{
+    public static string[] UserActions = new string[]
     {
         "   (1) Run basic compilation tests (no expressions)",
         "   (2) Run and compile examples of operations (fitness tests)",
         "   (3) Add your testing expressions, compile and evaluate",
         "   (4) Skip and quit this session",
     };
-
-    static void Main(string[] args)
-    {
-        var console = new ConsoleService();
-        var calculator = new ConsoleCalculator(console);
-
-        var asm = Assembly.GetExecutingAssembly();
-        var currentDir = Path.GetDirectoryName(asm.Location);
-
-        while (true)
-        {
-            calculator.Welcome(asm);
-
-            var choice = calculator.UserAction(userActions, 2);
-            switch (++choice)
-            {
-                case 1:
-                    RunCompilationTests(calculator, console, currentDir);
-                    break;
-                case 2:
-                    RunFitnessTests(calculator, console, currentDir);
-                    break;
-                case 3:
-                    RunCustomTests(calculator, console, currentDir);
-                    break;
-                case 4:
-                    console.WriteLine("Skipped");
-                    break;
-                default:
-                    console.WriteLine($"Sorry, no action with code {choice} to perform!");
-                    break;
-            }
-
-            bool quit = calculator.WaitUser();
-            if (quit) break;
-        }
-    }
 
     internal static void RunCustomTests(ConsoleCalculator calculator, IConsoleService console, string basePath)
     {
@@ -202,7 +199,7 @@ internal class Program
         console.Write($"{indent + indent}  Actual: ");
         PrintLineOnBackground(console, evalValue.ToString(), ConsoleColor.DarkBlue);
         console.Write($"{indent + indent}Assertion: ");
-        bool assert = expected.Equals( evalValue.ToString() );
+        bool assert = expected.Equals(evalValue.ToString());
         PrintSuccess(console, assert, assert.ToString());
 
         console.Write($"Test #{action + 1}... ");
