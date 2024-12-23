@@ -41,13 +41,13 @@ while (true)
 
 internal class App
 {
-    public static string[] UserActions = new string[]
-    {
+    public static string[] UserActions =
+    [
         "   (1) Run basic compilation tests (no expressions)",
         "   (2) Run and compile examples of operations (fitness tests)",
         "   (3) Add your testing expressions, compile and evaluate",
         "   (4) Skip and quit this session",
-    };
+    ];
 
     internal static void RunCustomTests(ConsoleCalculator calculator, IConsoleService console, string basePath)
     {
@@ -69,17 +69,17 @@ internal class App
     {
         console.WriteLine();
         console.WriteLine("Enter your C# expression with defined operations:");
-        var start = console.GetCursor();
+        var (Left, Top) = console.GetCursor();
         console.Color = ConsoleColor.DarkBlue;
         console.Write("> ");
         console.Color = ConsoleColor.Blue;
-        EnsureScrolling(console, ref start.Top);
+        EnsureScrolling(console, ref Top);
         var expression = console.ReadLine();
         console.Color = ConsoleColor.White;
         while (!calculator.AskYesNo("Is it final and correct?"))
         {
-            console.SetCursor(start.Left, start.Top);
-            EnsureScrolling(console, ref start.Top);
+            console.SetCursor(Left, Top);
+            EnsureScrolling(console, ref Top);
             expression = ReadLine(console, expression);
             console.ResetColor();
         }
@@ -88,12 +88,12 @@ internal class App
 
     internal static string EvaluateExpression(ConsoleCalculator calculator, IConsoleService console, string expression, string basePath, string? indent = null)
     {
-        indent = indent ?? "  ";
+        indent ??= "  ";
         console.WriteLine();
         console.WriteLine();
         console.Write("Evaluating of operations expression... ");
-        var start = console.GetCursor();
-        EnsureScrolling(console, ref start.Top); console.WriteLine();
+        var (_, Top) = console.GetCursor();
+        EnsureScrolling(console, ref Top); console.WriteLine();
         console.Write($"{indent}Expression: ");
         PrintLineOnBackground(console, expression, ConsoleColor.DarkBlue);
 
@@ -117,7 +117,7 @@ internal class App
         string[] actions = fitnessTypes
             .Select(t => t.Name)
             .Select(c => new { before = c.IndexOf("Fitness"), after = c.IndexOf("Fitness") + "Fitness".Length, name = c })
-            .Select(a => new { method = a.name.Substring(0, a.before), suffix = a.name.Substring(a.before).ToLower().Insert(a.after - a.before, " ") })
+            .Select(a => new { method = a.name[..a.before], suffix = a.name[a.before..].ToLower().Insert(a.after - a.before, " ") })
             .Select(b => $"{ConsoleCalculator.PointerIndent}Perform {b.method} {b.suffix}")
             .ToArray();
         console.WriteLine("Done");
@@ -179,7 +179,7 @@ internal class App
         try
         {
             var instance = Activator.CreateInstance(fitness);
-            test?.Invoke(instance, new object[0]);
+            test?.Invoke(instance, []);
             PrintSuccess(console, true);
         }
         catch (Exception e)
@@ -251,20 +251,20 @@ internal class App
         console.WriteLine("Done");
 
         console.Write($"{indent}Evaluating the expression... ");
-        var start = console.GetCursor();
-        EnsureScrolling(console, ref start.Top); console.WriteLine();
+        var (Left, Top) = console.GetCursor();
+        EnsureScrolling(console, ref Top); console.WriteLine();
         console.Write($"{indent + indent}Expression: ");
-        EnsureScrolling(console, ref start.Top);
+        EnsureScrolling(console, ref Top);
         PrintLineOnBackground(console, expression, ConsoleColor.DarkBlue);
         console.Write($"{indent + indent}Getting value... ");
         object evalValue = string.Empty;
         try
         {
-            evalValue = run?.Invoke(null, new object[0]) ?? string.Empty;
-            EnsureScrolling(console, ref start.Top);
+            evalValue = run?.Invoke(null, []) ?? string.Empty;
+            EnsureScrolling(console, ref Top);
             PrintLineOnBackground(console, evalValue?.ToString() ?? string.Empty, ConsoleColor.DarkBlue);
             var current = console.GetCursor();
-            console.SetCursor(start.Left, start.Top);
+            console.SetCursor(Left, Top);
             console.Write("Done");
             console.SetCursor(current.Left, current.Top);
         }
@@ -283,7 +283,7 @@ internal class App
 
         var typeName = "Test1";
         var testName = StartTest(console, typeName, "[{0}]: No references");
-        string[] references = Array.Empty<string>();
+        string[] references = [];
         var path = calculator.CompileFile(baseDir, typeName + ".csharp", references, indent);
         PrintTest(console, typeName, testName, path, indent);
 
@@ -322,12 +322,9 @@ internal class App
             try
             {
                 var fullName = $"{@namespace}.{typeName}";
-                var instance = dll.CreateInstance(fullName);
-                if (instance == null)
-                    throw new Exception("No instance");
-
+                var instance = dll.CreateInstance(fullName) ?? throw new Exception("No instance");
                 Type? t = dll.GetType(fullName, true);
-                var len = t?.GetMethod("Length")?.Invoke(instance, new object[] { "123" });
+                var len = t?.GetMethod("Length")?.Invoke(instance, ["123"]);
                 status = $"Type '{typeName}' loaded successfully.";
                 success = true;
             }
@@ -375,10 +372,10 @@ internal class App
     {
         console.Background = color;
         console.Write(indent + text);
-        var pos = console.GetCursor();
+        var (Left, Top) = console.GetCursor();
         console.ResetColor();
         console.Write(' ');
-        console.SetCursor(pos.Left, pos.Top);
+        console.SetCursor(Left, Top);
     }
     private static void PrintLineOnBackground(IConsoleService console, string text, ConsoleColor color, string? indent = null)
     {
@@ -398,9 +395,9 @@ internal class App
         console.Color = ConsoleColor.DarkBlue;
         console.Write(caret);
         console.Color = ConsoleColor.Blue;
-        console.Write(new string(buffer.ToArray()));
+        console.Write(new string([.. buffer]));
 
-        ConsoleKeyInfo info = new ConsoleKeyInfo('a', ConsoleKey.A, false, false, false);
+        var info = new ConsoleKeyInfo('a', ConsoleKey.A, false, false, false);
         while (info.Key != ConsoleKey.Enter)
         {
             info = console.ReadKey(true);
@@ -450,7 +447,7 @@ internal class App
             }
         }
         console.Write(Environment.NewLine);
-        return new string(buffer.ToArray());
+        return new string([.. buffer]);
     }
 
     private static void RewriteLine(IConsoleService console, string caret, List<char> buffer)
@@ -461,6 +458,6 @@ internal class App
         console.Color = ConsoleColor.DarkBlue;
         console.Write(caret);
         console.Color = ConsoleColor.Blue;
-        console.Write(new string(buffer.ToArray()));
+        console.Write(new string([.. buffer]));
     }
 }

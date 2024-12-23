@@ -45,8 +45,8 @@ internal class ConsoleCalculator(IConsoleService console) : Calculator(console)
         console.Color = ConsoleColor.Blue;
         operations.ToList().ForEach(t => console.Write(t.Name + ", "));
 
-        var cursor = console.GetCursor();
-        console.SetCursor(cursor.Left - 2, cursor.Top);
+        var (Left, Top) = console.GetCursor();
+        console.SetCursor(Left - 2, Top);
         console.WriteLine(' ');
 
         console.Color = ConsoleColor.White;
@@ -116,7 +116,7 @@ internal class ConsoleCalculator(IConsoleService console) : Calculator(console)
     {
         var max = console.BufferWidth;
         console.Color = color;
-        console.Write(action.Length <= max ? action : action.Substring(0, max));
+        console.Write(action.Length <= max ? action : action[..max]);
     }
 
     protected void PrintAction(string action, ConsoleColor color, int line)
@@ -140,10 +140,10 @@ internal class ConsoleCalculator(IConsoleService console) : Calculator(console)
         console.CursorVisible = false;
         console.WriteLine();
         console.WriteLine(header ?? "Your next action?");
-        var start = console.GetCursor();
+        var (_, Top) = console.GetCursor();
         foreach (var action in actions)
         {
-            EnsureScrolling(ref start.Top); // scroll start position with window log
+            EnsureScrolling(ref Top); // scroll start position with window log
             PrintAction(action, ConsoleColor.White);
             console.WriteLine();
         }
@@ -152,7 +152,7 @@ internal class ConsoleCalculator(IConsoleService console) : Calculator(console)
         var end = console.GetCursor();
 
         // Print selected action
-        PointToAction(actions, selected, ConsoleColor.Yellow, start.Top + selected);
+        PointToAction(actions, selected, ConsoleColor.Yellow, Top + selected);
         console.SetCursor(end.Left, end.Top);
 
         int index = selected;
@@ -186,9 +186,9 @@ internal class ConsoleCalculator(IConsoleService console) : Calculator(console)
                 console.Write(' ');
                 continue;
             }
-            PrintAction(actions[old], ConsoleColor.White, start.Top + old);
+            PrintAction(actions[old], ConsoleColor.White, Top + old);
             // Re-print new action as selected
-            PointToAction(actions, index, ConsoleColor.Yellow, start.Top + index);
+            PointToAction(actions, index, ConsoleColor.Yellow, Top + index);
 
             console.Beep();
             console.SetCursor(end.Left, end.Top);
@@ -221,11 +221,13 @@ internal class ConsoleCalculator(IConsoleService console) : Calculator(console)
     public string Compile(string csharp, string toFile, string[]? references = null, string indent = "")
     {
 
-        string[] referenceAssemblies = references ?? Array.Empty<string>();
-        var options = new CompilerParameters(referenceAssemblies, toFile, true);
-        options.GenerateExecutable = false;
-        options.OutputAssembly = toFile;
-        options.GenerateInMemory = false;
+        string[] referenceAssemblies = references ?? [];
+        var options = new CompilerParameters(referenceAssemblies, toFile, true)
+        {
+            GenerateExecutable = false,
+            OutputAssembly = toFile,
+            GenerateInMemory = false
+        };
 
         var stopWatch = new Stopwatch();
         stopWatch.Start();

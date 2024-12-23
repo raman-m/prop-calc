@@ -7,14 +7,9 @@ using System.Reflection;
 
 namespace RamanM.Properti.Calculator.Console.Roslyn;
 
-public class RoslynService : ICodeCompiler
+public class RoslynService(ReferenceAssemblyKind target) : ICodeCompiler
 {
-    public ReferenceAssemblyKind TargetFramework { get; }
-
-    public RoslynService(ReferenceAssemblyKind target)
-    {
-        TargetFramework = target;
-    }
+    public ReferenceAssemblyKind TargetFramework { get; } = target;
 
     public CompilerResults CompileAssemblyFromDom(CompilerParameters options, CodeCompileUnit compilationUnit)
     {
@@ -38,7 +33,7 @@ public class RoslynService : ICodeCompiler
 
     public CompilerResults CompileAssemblyFromSource(CompilerParameters options, string source)
     {
-        return CompileAssemblyFromSourceBatch(options, new[] { source });
+        return CompileAssemblyFromSourceBatch(options, [source]);
     }
 
     public CompilerResults CompileAssemblyFromSourceBatch(CompilerParameters options, string[] sources)
@@ -48,7 +43,7 @@ public class RoslynService : ICodeCompiler
 
     public CompilerResults CompileAssembly(CompilerParameters options, string source, string[]? references = null)
     {
-        return CompileAssembly(options, new[] { source }, references);
+        return CompileAssembly(options, [source], references);
     }
 
     public CompilerResults CompileAssembly(CompilerParameters options, string[] sources, string[]? references = null)
@@ -76,7 +71,7 @@ public class RoslynService : ICodeCompiler
         return Compile(compilation, options);
     }
 
-    private void AppendDiagnostics(IEnumerable<Diagnostic> diagnostics, CompilerResults results)
+    private static void AppendDiagnostics(IEnumerable<Diagnostic> diagnostics, CompilerResults results)
     {
         foreach (var diagnostic in diagnostics)
         {
@@ -89,14 +84,16 @@ public class RoslynService : ICodeCompiler
                     line: diagnostic.Location.GetLineSpan().StartLinePosition.Line,
                     column: diagnostic.Location.GetLineSpan().StartLinePosition.Character,
                     errorNumber: diagnostic.Id,
-                    errorText: diagnostic.GetMessage());
-                error.IsWarning = diagnostic.Severity != DiagnosticSeverity.Error;
+                    errorText: diagnostic.GetMessage())
+                {
+                    IsWarning = diagnostic.Severity != DiagnosticSeverity.Error
+                };
                 results.Errors.Add(error);
             }
         }
     }
 
-    protected CompilerResults Compile(CSharpCompilation compilation, CompilerParameters options)
+    protected static CompilerResults Compile(CSharpCompilation compilation, CompilerParameters options)
     {
         var compilerResults = new CompilerResults(new TempFileCollection());
         AppendDiagnostics(compilation.GetDiagnostics(), compilerResults);
