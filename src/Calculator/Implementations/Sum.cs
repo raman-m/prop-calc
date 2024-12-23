@@ -1,26 +1,23 @@
-﻿using System;
+﻿namespace RamanM.Properti.Calculator.Implementations;
 
-namespace RamanM.Properti.Calculator.Implementations
+/// <summary>
+/// Summation of two operations.
+/// </summary>
+public class Sum : BinaryOperation<double>
 {
-    /// <summary>
-    /// Summation of two operations.
-    /// </summary>
-    public class Sum : BinaryOperation<double>
-    {
-        private Sum() { }
+    private Sum() { }
 
-        public Sum(Operation left, Operation right)
-            : base(left, right) { }
+    public Sum(Operation left, Operation right)
+        : base(left, right) { }
 
-        protected override char Operator => '+';
+    protected override char Operator => '+';
 
-        public override double Apply(double left, double right)
-            => left + right;
+    public override double Apply(double left, double right)
+        => left + right;
 
-        public static explicit operator int(Sum operation)
-            => Convert.ToInt32(operation.ToResult());
+    public static explicit operator int(Sum operation)
+        => Convert.ToInt32(operation.ToResult());
 
-        public static explicit operator long(Sum operation)
-            => Convert.ToInt64(operation.ToResult());
-    }
+    public static explicit operator long(Sum operation)
+        => Convert.ToInt64(operation.ToResult());
 }

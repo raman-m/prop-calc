@@ -1,115 +1,113 @@
 ﻿using RamanM.Properti.Calculator.Implementations;
-using RamanM.Properti.Calculator.Interfaces;
 using Xunit;
 
-namespace RamanM.Properti.Calculator.Tests.Conversion
+namespace RamanM.Properti.Calculator.Tests.Conversion;
+
+public class SubtractionConversionTests
 {
-    public class SubtractionConversionTests
+    [Fact]
+    public void Subtraction_DoubleParamsCstr_ReturnsSubtractionObject()
     {
-        [Fact]
-        public void Subtraction_DoubleParamsCstr_ReturnsSubtractionObject()
-        {
-            // Arrange, Act
-            var sut = new Subtraction(5, 3);
+        // Arrange, Act
+        var sut = new Subtraction(5, 3);
 
-            // Assert
-            Assert.NotNull(sut);
-            Assert.Equal(2D, sut.ToResult());
-        }
+        // Assert
+        Assert.NotNull(sut);
+        Assert.Equal(2D, sut.ToResult());
+    }
 
-        [Fact]
-        public void Subtraction_MixedDoubleParamsCstr_ReturnsSubtractionObject()
-        {
-            // Arrange, Act
-            var sut = new Subtraction(3, new Operation<double>(1));
-            var sut2 = new Subtraction(new Operation<double>(1), 7);
+    [Fact]
+    public void Subtraction_MixedDoubleParamsCstr_ReturnsSubtractionObject()
+    {
+        // Arrange, Act
+        var sut = new Subtraction(3, new Operation<double>(1));
+        var sut2 = new Subtraction(new Operation<double>(1), 7);
 
-            // Assert
-            Assert.NotNull(sut);
-            Assert.NotNull(sut2);
-            Assert.Equal(2D, sut.ToResult());
-            Assert.Equal(-6D, sut2.ToResult());
-        }
+        // Assert
+        Assert.NotNull(sut);
+        Assert.NotNull(sut2);
+        Assert.Equal(2D, sut.ToResult());
+        Assert.Equal(-6D, sut2.ToResult());
+    }
 
-        [Fact]
-        public void Subtraction_FullInterfaceParamsCstr_ReturnsSubtractionObject()
-        {
-            // Arrange
-            /*IOperation<double>*/ var param1 = new Subtraction(5, 2);
-            /*IOperation<double>*/ var param2 = new Subtraction(5, 4);
+    [Fact]
+    public void Subtraction_FullInterfaceParamsCstr_ReturnsSubtractionObject()
+    {
+        // Arrange
+        /*IOperation<double>*/ var param1 = new Subtraction(5, 2);
+        /*IOperation<double>*/ var param2 = new Subtraction(5, 4);
 
-            // Act
-            var sut = new Subtraction(param1, param2);
+        // Act
+        var sut = new Subtraction(param1, param2);
 
-            // Assert
-            Assert.NotNull(sut);
-            Assert.Equal(2D, sut.ToResult());
-        }
+        // Assert
+        Assert.NotNull(sut);
+        Assert.Equal(2D, sut.ToResult());
+    }
 
-        [Fact]
-        public void Subtraction_ImplicitConversionOfTwoSubtraction_ReturnsSubtractionObject()
-        {
-            // Arrange, Act
-            var sut = new Subtraction(new Subtraction(7, 2), new Subtraction(5, 3));
+    [Fact]
+    public void Subtraction_ImplicitConversionOfTwoSubtraction_ReturnsSubtractionObject()
+    {
+        // Arrange, Act
+        var sut = new Subtraction(new Subtraction(7, 2), new Subtraction(5, 3));
 
-            // Assert
-            Assert.NotNull(sut);
-            Assert.Equal(3D, sut.ToResult());
-        }
+        // Assert
+        Assert.NotNull(sut);
+        Assert.Equal(3D, sut.ToResult());
+    }
 
-        [Fact]
-        public void Subtraction_ImplicitConversionOfTwoSum_ReturnsSubtractionObject()
-        {
-            // Arrange, Act
-            var sut = new Subtraction(new Sum(3, 2), new Sum(5, 3));
+    [Fact]
+    public void Subtraction_ImplicitConversionOfTwoSum_ReturnsSubtractionObject()
+    {
+        // Arrange, Act
+        var sut = new Subtraction(new Sum(3, 2), new Sum(5, 3));
 
-            // Assert
-            Assert.NotNull(sut);
-            Assert.Equal(-3D, sut.ToResult());
-        }
+        // Assert
+        Assert.NotNull(sut);
+        Assert.Equal(-3D, sut.ToResult());
+    }
 
-        [Fact]
-        public void Subtraction_ImplicitConversionOfTwoMultiplication_ReturnsSubtractionObject()
-        {
-            // Arrange, Act
-            var sut = new Subtraction(new Multiplication(3, 2), new Multiplication(5, 2));
+    [Fact]
+    public void Subtraction_ImplicitConversionOfTwoMultiplication_ReturnsSubtractionObject()
+    {
+        // Arrange, Act
+        var sut = new Subtraction(new Multiplication(3, 2), new Multiplication(5, 2));
 
-            // Assert
-            Assert.NotNull(sut);
-            Assert.Equal(-4D, sut.ToResult());
-        }
+        // Assert
+        Assert.NotNull(sut);
+        Assert.Equal(-4D, sut.ToResult());
+    }
 
-        [Fact]
-        public void Subtraction_ImplicitConversionOfTwoDivision_ReturnsSubtractionObject()
-        {
-            // Arrange, Act
-            var sut = new Subtraction(new Division(15, 3), new Division(15, 5));
+    [Fact]
+    public void Subtraction_ImplicitConversionOfTwoDivision_ReturnsSubtractionObject()
+    {
+        // Arrange, Act
+        var sut = new Subtraction(new Division(15, 3), new Division(15, 5));
 
-            // Assert
-            Assert.NotNull(sut);
-            Assert.Equal(2D, sut.ToResult());
-        }
+        // Assert
+        Assert.NotNull(sut);
+        Assert.Equal(2D, sut.ToResult());
+    }
 
-        [Fact]
-        public void Subtraction_ImplicitConversionOfTwoFraction_ReturnsSubtractionObject()
-        {
-            // Arrange, Act
-            var sut = new Subtraction(new Fraction(4, 3), new Fraction(1, 3));
+    [Fact]
+    public void Subtraction_ImplicitConversionOfTwoFraction_ReturnsSubtractionObject()
+    {
+        // Arrange, Act
+        var sut = new Subtraction(new Fraction(4, 3), new Fraction(1, 3));
 
-            // Assert
-            Assert.NotNull(sut);
-            Assert.Equal(1.0D, sut.ToResult());
-        }
+        // Assert
+        Assert.NotNull(sut);
+        Assert.Equal(1.0D, sut.ToResult());
+    }
 
-        [Fact]
-        public void Subtraction_ImplicitConversionOfTwoFaculty_ReturnsSubtractionObject()
-        {
-            // Arrange, Act
-            var sut = new Subtraction(new Faculty(3), new Faculty(4));
+    [Fact]
+    public void Subtraction_ImplicitConversionOfTwoFaculty_ReturnsSubtractionObject()
+    {
+        // Arrange, Act
+        var sut = new Subtraction(new Faculty(3), new Faculty(4));
 
-            // Assert
-            Assert.NotNull(sut);
-            Assert.Equal(-18D, sut.ToResult());
-        }
+        // Assert
+        Assert.NotNull(sut);
+        Assert.Equal(-18D, sut.ToResult());
     }
 }

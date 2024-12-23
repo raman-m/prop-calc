@@ -1,84 +1,83 @@
 ﻿using RamanM.Properti.Calculator.Implementations;
 using Xunit;
 
-namespace RamanM.Properti.Calculator.Tests
+namespace RamanM.Properti.Calculator.Tests;
+
+public class DivisionTests
 {
-    public class DivisionTests
+    [Fact]
+    public void ToResult_Example_ReturnsTheQuotient()
     {
-        [Fact]
-        public void ToResult_Example_ReturnsTheQuotient()
-        {
-            // Arrange
-            var sut = new Division(30, 5);
-            double expected = 6;
+        // Arrange
+        var sut = new Division(30, 5);
+        double expected = 6;
 
-            // Act
-            var actual = sut.ToResult();
+        // Act
+        var actual = sut.ToResult();
 
-            // Assert
-            Assert.Equal(expected, actual);
-        }
+        // Assert
+        Assert.Equal(expected, actual);
+    }
 
-        [Fact]
-        public void Print_NoParent_PrintsFinalEquality()
-        {
-            // Arrange
-            double left = 30D, right = 5D, quotient = 6D;
-            var sut = new Division(left, right);
-            string expected = $"({left} / {right}) = {quotient}";
+    [Fact]
+    public void Print_NoParent_PrintsFinalEquality()
+    {
+        // Arrange
+        double left = 30D, right = 5D, quotient = 6D;
+        var sut = new Division(left, right);
+        string expected = $"({left} / {right}) = {quotient}";
 
-            // Act
-            var actual = sut.Print();
+        // Act
+        var actual = sut.Print();
 
-            // Assert
-            Assert.Equal(expected, actual);
-        }
+        // Assert
+        Assert.Equal(expected, actual);
+    }
 
-        [Fact]
-        public void Print_WithParent_PrintsWithoutResult()
-        {
-            // Arrange
-            double left = 30D, right = 5D;
-            var sut = new Division(left, right);
-            sut.Parent = new Operation(() => sut.ToResult());
-            string expected = $"({left} / {right})";
+    [Fact]
+    public void Print_WithParent_PrintsWithoutResult()
+    {
+        // Arrange
+        double left = 30D, right = 5D;
+        var sut = new Division(left, right);
+        sut.Parent = new Operation(() => sut.ToResult());
+        string expected = $"({left} / {right})";
 
-            // Act
-            var actual = sut.Print();
+        // Act
+        var actual = sut.Print();
 
-            // Assert
-            Assert.Equal(expected, actual);
-        }
+        // Assert
+        Assert.Equal(expected, actual);
+    }
 
-        [Fact]
-        public void PrintSentence_NoParent_PrintsFinalSentence()
-        {
-            // Arrange
-            double left = 30D, right = 5D, quotient = 6D;
-            var sut = new Division(left, right);
-            string expected = $"{nameof(Division).ToLower()} of {left} by {right} is {quotient}";
+    [Fact]
+    public void PrintSentence_NoParent_PrintsFinalSentence()
+    {
+        // Arrange
+        double left = 30D, right = 5D, quotient = 6D;
+        var sut = new Division(left, right);
+        string expected = $"{nameof(Division).ToLower()} of {left} by {right} is {quotient}";
 
-            // Act
-            var actual = sut.PrintSentence();
+        // Act
+        var actual = sut.PrintSentence();
 
-            // Assert
-            Assert.Equal(expected, actual);
-        }
+        // Assert
+        Assert.Equal(expected, actual);
+    }
 
-        [Fact]
-        public void PrintSentence_WithParent_PrintsWell()
-        {
-            // Arrange
-            double left = 30D, right = 5D;
-            var sut = new Division(left, right);
-            sut.Parent = new Operation(() => sut.ToResult());
-            string expected = $"{nameof(Division).ToLower()} of {left} by {right}";
+    [Fact]
+    public void PrintSentence_WithParent_PrintsWell()
+    {
+        // Arrange
+        double left = 30D, right = 5D;
+        var sut = new Division(left, right);
+        sut.Parent = new Operation(() => sut.ToResult());
+        string expected = $"{nameof(Division).ToLower()} of {left} by {right}";
 
-            // Act
-            var actual = sut.PrintSentence();
+        // Act
+        var actual = sut.PrintSentence();
 
-            // Assert
-            Assert.Equal(expected, actual);
-        }
+        // Assert
+        Assert.Equal(expected, actual);
     }
 }

@@ -1,33 +1,31 @@
 ﻿using RamanM.Properti.Calculator.Interfaces;
-using System;
 
-namespace RamanM.Properti.Calculator.Console.Interfaces
+namespace RamanM.Properti.Calculator.Console.Interfaces;
+
+public interface IConsoleService : IConsoleWriting
 {
-    public interface IConsoleService : IConsoleWriting
-    {
-        ConsoleKeyInfo ReadKey();
-        ConsoleKeyInfo ReadKey(bool intercept);
-        string ReadLine();
-        void Clear();
+    ConsoleKeyInfo ReadKey();
+    ConsoleKeyInfo ReadKey(bool intercept);
+    string ReadLine();
+    void Clear();
 
-        ConsoleColor Color { get; set; }
-        ConsoleColor Background { get; set; }
-        void ResetColor();
+    ConsoleColor Color { get; set; }
+    ConsoleColor Background { get; set; }
+    void ResetColor();
 
-        (int Left, int Top) GetCursor();
-        void SetCursor(int left, int top);
+    (int Left, int Top) GetCursor();
+    void SetCursor(int left, int top);
 
-        int BufferWidth { get; set; }
-        int BufferHeight { get; set; }
+    int BufferWidth { get; set; }
+    int BufferHeight { get; set; }
 
-        int WindowWidth { get; set; }
+    int WindowWidth { get; set; }
 
-        int CursorLeft { get; set; }
-        int CursorTop { get; set; }
+    int CursorLeft { get; set; }
+    int CursorTop { get; set; }
 
-        void Beep();
-        void Beep(int frequency, int duration);
+    void Beep();
+    void Beep(int frequency, int duration);
 
-        bool CursorVisible { get; set; }
-    }
+    bool CursorVisible { get; set; }
 }

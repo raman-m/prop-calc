@@ -2,12 +2,6 @@
 using RamanM.Properti.Calculator.Console.Interfaces;
 using RamanM.Properti.Calculator.Interfaces;
 using RamanM.Properti.Calculator.Tests;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Linq.Expressions;
 using System.Reflection;
 using Xunit;
 

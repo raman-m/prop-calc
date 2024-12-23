@@ -1,5 +1,4 @@
 ﻿using RamanM.Properti.Calculator.Interfaces;
-using System;
 
 namespace RamanM.Properti.Calculator.Implementations;
 
